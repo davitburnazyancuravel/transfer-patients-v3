@@ -1,0 +1,357 @@
+/* ============================================================
+   Partners — the integration constellation.
+
+   A pale panel, a centred head, and one diagram: the brand orb on
+   the axis, two mirrored four-by-three grids of small white chips
+   either side, and six dotted wires running out through every row
+   to the frame edge.
+
+   The geometry is deliberately deterministic. The chip grids are
+   three equal fractions of a fixed figure height, so every chip
+   centres at a sixth, a half or five sixths of the box — which is
+   exactly where the stretched 1000×400 wire field puts its rows.
+   Change --pt-fig-h freely; the wires follow.
+
+   Everything here is prefixed .pt.
+   ============================================================ */
+
+.pt {
+  --pt-chip: 58px;
+  /* A floor, not the final spacing: the rows distribute their four
+     chips across whatever width they are given, and this is only
+     what they refuse to go below. The captions are sized against
+     it, so the tightest case is the one that has to be safe. */
+  --pt-gap-x: 30px;
+  --pt-orb: 110px;
+  --pt-fig-h: clamp(292px, 28vw, 330px);
+  /* Room under the bottom row for its captions, which hang out of
+     the flow so they cannot shove the chips off the wires. */
+  --pt-label-space: 18px;
+  --pt-flow: 1.9s;
+}
+
+/* ---- Head ------------------------------------------------- */
+
+.pt__head { gap: 20px; }
+
+/* .line-rise clips to the line box, which would shave the tails off
+   descenders at --lh-tight. Pad the moving span, not the mask. */
+.pt__title .line-rise > span { padding-bottom: .08em; }
+
+/* ---- The figure ------------------------------------------- */
+
+.pt__figure {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  column-gap: clamp(28px, 3.6vw, 56px);
+  padding-bottom: var(--pt-label-space);
+  margin-top: clamp(40px, 5vw, 76px);
+}
+
+/* A whisper of accent behind the orb so it reads as lit rather than
+   printed. Small and very faint — the ground stays near-white. */
+.pt__bloom {
+  z-index: 0;
+  top: 50%;
+  left: 50%;
+  width: 280px;
+  height: 280px;
+  transform: translate(-50%, -50%);
+  --bloom-c: var(--accent);
+  opacity: .16;
+}
+
+/* ---- Wires ------------------------------------------------ */
+/* Stretched to the box with preserveAspectRatio="none", so the fan
+   widens with the layout. Every stroke carries non-scaling-stroke,
+   which keeps the weight and the dash pitch in screen pixels no
+   matter how far the field is pulled. */
+
+.pt__wires {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  display: block;
+  width: 100%;
+  height: calc(100% - var(--pt-label-space));
+  overflow: visible;
+  /* The reveal: the wires run out of the centre rather than simply
+     appearing, which is why the orb pops after them. */
+  clip-path: inset(0 50% 0 50%);
+  transition:
+    opacity var(--d-md) var(--e-out),
+    clip-path var(--d-xl) var(--e-out);
+  transition-delay: calc(var(--i, 0) * 70ms);
+}
+
+.is-in .pt__wires { clip-path: inset(0 0 0 0); }
+
+.pt__wire {
+  fill: none;
+  stroke: var(--line-strong);
+  stroke-width: 1.4;
+  stroke-linecap: round;
+  /* Round caps on a 1-unit dash render as dots. */
+  stroke-dasharray: 1 8;
+  animation: pt-flow var(--pt-flow) linear infinite;
+}
+
+/* One period of the dash pattern. Negative offset walks the dots
+   along the path direction, and every path is authored centre-out,
+   so both sides flow away from the orb. */
+@keyframes pt-flow {
+  to { stroke-dashoffset: -9; }
+}
+
+/* ---- Chip grids ------------------------------------------- */
+
+.pt__side {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-rows: repeat(3, minmax(0, 1fr));
+  height: var(--pt-fig-h);
+  min-width: 0;
+}
+
+.pt__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--pt-gap-x);
+  min-width: 0;
+}
+
+/* Mirrored: on the left the row is written orb-outwards too, it just
+   runs the other way, so `c === 0` is always the chip on the axis. */
+.pt__side--l .pt__row { flex-direction: row-reverse; }
+
+.pt__slot {
+  position: relative;
+  flex: 0 0 auto;
+}
+
+.pt__chip {
+  display: grid;
+  place-items: center;
+  width: var(--pt-chip);
+  height: var(--pt-chip);
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: var(--card);
+  border: 1px solid var(--line);
+  box-shadow: var(--sh-sm);
+}
+
+.pt__glyph {
+  width: 24px;
+  height: 24px;
+  fill: none;
+  /* One weight for all twelve marks; the low opacity keeps the
+     chips as texture until you actually look at one. */
+  stroke: color-mix(in srgb, var(--ink-muted) 58%, transparent);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Out of flow, so a caption never pushes its chip off the wire. The
+   width is derived from the tightest possible chip pitch, which is
+   what stops the two captions on the middle row touching. */
+.pt__cap {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(94px, calc(var(--pt-chip) + var(--pt-gap-x) - 10px));
+  font-size: var(--fs-eyebrow);
+  line-height: 1.28;
+  text-align: center;
+  text-wrap: balance;
+  color: var(--meta);
+}
+
+/* ---- Hub -------------------------------------------------- */
+
+.pt__hub {
+  position: relative;
+  z-index: 3;
+  display: grid;
+  justify-items: center;
+}
+
+/* The About bento's orb, at the same recipe: --grad-orb under the
+   thick white halo of --sh-orb. */
+.pt__orb {
+  display: grid;
+  place-items: center;
+  width: var(--pt-orb);
+  height: var(--pt-orb);
+  border-radius: 50%;
+  background: var(--grad-orb);
+  box-shadow: var(--sh-orb);
+}
+
+/* Half-strength white, as in About: it lets the mark's solid white
+   cross read against its own droplet instead of dissolving into it. */
+.pt__orb svg {
+  width: 48px;
+  height: 48px;
+  color: color-mix(in srgb, var(--on-photo) 50%, transparent);
+}
+
+/* Narrow layouts only — see the breakpoint below. */
+.pt__stem {
+  display: none;
+  width: 4px;
+  height: 34px;
+  margin-top: 14px;
+  background-image: radial-gradient(
+    circle at 50% 1.6px,
+    var(--line-strong) 1.6px,
+    transparent 1.7px
+  );
+  background-size: 100% 9px;
+  animation: pt-stem var(--pt-flow) linear infinite;
+}
+
+@keyframes pt-stem {
+  to { background-position-y: 9px; }
+}
+
+/* ---- Narrow-screen spokes --------------------------------- */
+
+.pt__spokes {
+  display: none;
+  grid-column: 1 / -1;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px clamp(12px, 3.4vw, 30px);
+  width: 100%;
+  max-width: 520px;
+  margin-top: 22px;
+  margin-inline: auto;
+}
+
+.pt__spoke {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  --pt-chip: 46px;
+}
+
+.pt__spokeLabel {
+  min-width: 0;
+  font-size: var(--fs-sm);
+  line-height: 1.35;
+  color: var(--ink-2);
+  text-wrap: pretty;
+}
+
+/* ---- Facts ------------------------------------------------ */
+
+.pt__facts {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-top: clamp(44px, 5.4vw, 78px);
+}
+
+.pt__fact {
+  display: grid;
+  justify-items: center;
+  gap: 9px;
+  padding-inline: clamp(14px, 2.4vw, 34px);
+  text-align: center;
+}
+
+/* Hairlines between, nothing around: the row is a caption to the
+   diagram above it, not a set of cards. */
+.pt__fact + .pt__fact { border-inline-start: 1px solid var(--line); }
+
+.pt__factLabel {
+  font-size: var(--fs-eyebrow);
+  font-weight: 600;
+  letter-spacing: var(--tr-eyebrow);
+  text-transform: uppercase;
+  color: var(--meta);
+}
+
+.pt__factValue {
+  font-size: var(--fs-lg);
+  font-weight: 600;
+  line-height: var(--lh-snug);
+  letter-spacing: -.015em;
+  color: var(--ink);
+  text-wrap: balance;
+}
+
+/* ---- Responsive ------------------------------------------- */
+
+@media (max-width: 1040px) {
+  .pt {
+    --pt-chip: 52px;
+    --pt-gap-x: 26px;
+    --pt-orb: 98px;
+  }
+  .pt__orb svg { width: 42px; height: 42px; }
+  .pt__glyph { width: 22px; height: 22px; }
+}
+
+/* Below here the grids have no room to be a diagram, so the eight
+   spokes carry it on their own: orb, one wire, then a labelled
+   two-column list. */
+@media (max-width: 880px) {
+  .pt__figure {
+    grid-template-columns: minmax(0, 1fr);
+    justify-items: center;
+    padding-bottom: 0;
+  }
+
+  .pt__side,
+  .pt__wires { display: none; }
+
+  .pt__bloom { top: 56px; width: 240px; height: 240px; }
+
+  .pt__stem { display: block; }
+
+  .pt__spokes { display: grid; }
+}
+
+@media (max-width: 620px) {
+  .pt__facts { grid-template-columns: minmax(0, 1fr); }
+
+  .pt__fact {
+    justify-items: start;
+    padding-inline: 0;
+    padding-block: 16px;
+    text-align: left;
+  }
+
+  .pt__fact + .pt__fact {
+    border-inline-start: 0;
+    border-top: 1px solid var(--line);
+  }
+}
+
+@media (max-width: 400px) {
+  .pt__spokes { gap: 14px 12px; }
+  .pt__spoke { --pt-chip: 42px; gap: 10px; }
+  .pt__spokeLabel { font-size: var(--fs-micro); }
+}
+
+/* ---- Reduced motion --------------------------------------- */
+/* base.css already flattens .rv and collapses the durations; these
+   are the two loops and the one clip this section adds. */
+
+@media (prefers-reduced-motion: reduce) {
+  .pt__wire { animation: none; }
+  .pt__stem { animation: none; }
+
+  .pt__wires {
+    clip-path: none;
+    transition: none;
+  }
+}

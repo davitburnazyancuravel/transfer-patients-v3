@@ -1,0 +1,390 @@
+/* ============================================================
+   Curavel v3 — base
+   Reset, layout primitives, type scale, buttons, reveal system.
+   Sections may add their own CSS but must build on these.
+   ============================================================ */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
+  scroll-padding-top: calc(var(--header-h) + 16px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+}
+
+body {
+  margin: 0;
+  background: #f1f2f7;
+  color: var(--body);
+  font-family: var(--font);
+  font-size: var(--fs-base);
+  line-height: var(--lh-body);
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+img, svg, video { display: block; max-width: 100%; }
+img { height: auto; }
+button, input, select, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; background: none; border: 0; padding: 0; }
+a { color: inherit; text-decoration: none; }
+ul, ol { margin: 0; padding: 0; list-style: none; }
+p { margin: 0; }
+h1, h2, h3, h4 { margin: 0; font-weight: 600; color: var(--ink); line-height: var(--lh-tight); letter-spacing: -.018em; }
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+.sr {
+  position: absolute; width: 1px; height: 1px;
+  padding: 0; margin: -1px; overflow: hidden;
+  clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+.skip {
+  position: fixed; top: 10px; left: 10px; z-index: 200;
+  transform: translateY(-160%);
+  background: var(--card); color: var(--ink);
+  padding: 10px 16px; border-radius: var(--r-pill);
+  box-shadow: var(--sh-md); font-weight: 600;
+  transition: transform var(--d-sm) var(--e-out);
+}
+.skip:focus { transform: none; }
+
+/* ---- The plate ------------------------------------------- */
+/* The whole page sits on a rounded near-white card, exactly as
+   in the reference recording. */
+
+.plate {
+  position: relative;
+  z-index: var(--z-plate);
+  max-width: var(--shell);
+  margin: 10px auto;
+  background: var(--ground);
+  border-radius: var(--r-plate);
+  overflow: clip;
+  box-shadow: 0 1px 3px rgba(20, 27, 71, .06), 0 24px 60px -40px rgba(20, 27, 71, .28);
+}
+
+@media (max-width: 720px) {
+  .plate { margin: 0; border-radius: 0; }
+}
+
+/* ---- Layout ---------------------------------------------- */
+
+.wrap {
+  width: 100%;
+  max-width: var(--page);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.wrap--wide { max-width: 1420px; }
+
+.section {
+  position: relative;
+  padding-block: var(--sec-y);
+}
+
+.section--panel { background: var(--grad-panel); }
+.section--white { background: var(--ground-2); }
+.section--flush { padding-block: 0; }
+.section--tight { padding-block: clamp(48px, 5vw, 84px); }
+
+/* ---- Section heads --------------------------------------- */
+
+.sec-head {
+  display: grid;
+  justify-items: center;
+  text-align: center;
+  gap: 18px;
+  max-width: 760px;
+  margin-inline: auto;
+}
+
+.sec-head--left {
+  justify-items: start;
+  text-align: left;
+  margin-inline: 0;
+}
+
+/* Eyebrow: small brand mark + outlined pill, as in the reference */
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: var(--fs-eyebrow);
+  font-weight: 600;
+  letter-spacing: var(--tr-eyebrow);
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.eyebrow__mark {
+  display: grid;
+  place-items: center;
+  width: 22px; height: 22px;
+  flex: 0 0 22px;
+  color: var(--accent);
+  opacity: .9;
+}
+
+.eyebrow__label {
+  padding: 5px 14px;
+  border: 1px solid var(--accent-ring);
+  border-radius: var(--r-pill);
+  background: rgba(255, 255, 255, .6);
+}
+
+/* Split heading: muted first half, ink second half */
+.h2 {
+  font-size: var(--fs-h2);
+  font-weight: 600;
+  color: var(--ink-muted);
+  letter-spacing: -.022em;
+  text-wrap: balance;
+}
+.h2 strong { font-weight: 600; color: var(--ink); }
+
+.h3 { font-size: var(--fs-h3); font-weight: 600; color: var(--ink); }
+
+.lede {
+  font-size: var(--fs-lede);
+  line-height: 1.62;
+  color: var(--body);
+  max-width: 62ch;
+  text-wrap: pretty;
+}
+.lede--sm { font-size: var(--fs-base); }
+.lede--center { margin-inline: auto; text-align: center; }
+
+.meta { font-size: var(--fs-sm); color: var(--meta); }
+
+/* ---- Buttons --------------------------------------------- */
+
+.btn {
+  --btn-pad: 8px 8px 8px 24px;
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  padding: var(--btn-pad);
+  border-radius: var(--r-pill);
+  font-size: var(--fs-base);
+  font-weight: 500;
+  line-height: 1;
+  white-space: nowrap;
+  transition:
+    transform var(--d-xs) var(--e-out),
+    box-shadow var(--d-sm) var(--e-out),
+    background-color var(--d-sm) var(--e-out),
+    border-color var(--d-sm) var(--e-out);
+}
+
+.btn:hover { transform: translateY(-1px); }
+.btn:active { transform: translateY(0); }
+
+.btn__arrow {
+  display: grid;
+  place-items: center;
+  width: 34px; height: 34px;
+  flex: 0 0 34px;
+  border-radius: 50%;
+  transition: transform var(--d-sm) var(--e-spring);
+}
+.btn:hover .btn__arrow { transform: translateX(3px); }
+.btn__arrow svg { width: 15px; height: 15px; }
+
+.btn--primary {
+  background: var(--grad-cta);
+  color: #fff;
+  box-shadow: var(--sh-cta);
+}
+.btn--primary .btn__arrow { background: rgba(255, 255, 255, .22); color: #fff; }
+.btn--primary:hover { box-shadow: 0 14px 32px -12px rgba(81, 116, 246, .68); }
+
+.btn--ghost {
+  background: var(--card);
+  color: var(--ink);
+  border: 1px solid var(--line);
+  box-shadow: var(--sh-sm);
+}
+.btn--ghost .btn__arrow { background: var(--grad-cta); color: #fff; }
+.btn--ghost:hover { border-color: var(--line-strong); box-shadow: var(--sh-md); }
+
+.btn--light {
+  background: rgba(255, 255, 255, .96);
+  color: var(--ink);
+  box-shadow: 0 10px 30px -14px rgba(10, 14, 38, .6);
+}
+.btn--light .btn__arrow { background: var(--grad-cta); color: #fff; }
+
+/* Bare circular arrow button (used as a section affordance) */
+.icon-btn {
+  display: grid;
+  place-items: center;
+  width: 42px; height: 42px;
+  border-radius: 50%;
+  border: 1px solid var(--accent-ring);
+  background: var(--card);
+  color: var(--accent);
+  box-shadow: var(--sh-sm);
+  transition: transform var(--d-xs) var(--e-out), background-color var(--d-sm) var(--e-out), color var(--d-sm) var(--e-out);
+}
+.icon-btn:hover:not(:disabled) { background: var(--accent); color: #fff; transform: translateY(-1px); }
+.icon-btn:disabled { opacity: .38; cursor: default; }
+.icon-btn svg { width: 16px; height: 16px; }
+
+/* ---- Small parts ----------------------------------------- */
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  box-shadow: var(--sh-card);
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 14px;
+  border-radius: var(--r-pill);
+  background: var(--card);
+  border: 1px solid var(--line);
+  font-size: var(--fs-micro);
+  font-weight: 500;
+  color: var(--ink-2);
+  white-space: nowrap;
+}
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 12px;
+  border-radius: var(--r-pill);
+  background: var(--c-wash, var(--accent-wash));
+  color: var(--c-ink, var(--accent-deep));
+  font-size: var(--fs-micro);
+  font-weight: 600;
+}
+
+.counter {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  color: var(--ink);
+  letter-spacing: .02em;
+}
+.counter em { font-style: normal; color: var(--meta); font-weight: 400; }
+
+.rule { height: 1px; background: var(--line); border: 0; margin: 0; }
+
+/* ---- Per-section accent ---------------------------------- */
+/* Any element carrying data-accent exposes --c / --c-wash to its
+   subtree, so cards, ticks and icons colour themselves. */
+
+[data-accent] { --c: var(--accent); --c-wash: var(--accent-wash); }
+[data-accent="emergency"] { --c: var(--c-emergency); --c-wash: var(--c-emergency-w); }
+[data-accent="interfac"]  { --c: var(--c-interfac);  --c-wash: var(--c-interfac-w); }
+[data-accent="longdist"]  { --c: var(--c-longdist);  --c-wash: var(--c-longdist-w); }
+[data-accent="neonatal"]  { --c: var(--c-neonatal);  --c-wash: var(--c-neonatal-w); }
+[data-accent="bariatric"] { --c: var(--c-bariatric); --c-wash: var(--c-bariatric-w); }
+
+/* Tick used in every bullet list */
+.tick {
+  display: grid;
+  place-items: center;
+  width: 18px; height: 18px;
+  flex: 0 0 18px;
+  border-radius: 50%;
+  background: var(--c, var(--accent));
+  color: #fff;
+}
+.tick svg { width: 10px; height: 10px; }
+
+.ticks { display: grid; gap: 12px; }
+.ticks li { display: flex; align-items: center; gap: 12px; color: var(--ink-2); }
+
+/* ---- Reveal system --------------------------------------- */
+/* Elements marked .rv start displaced and settle when their
+   section scrolls into view. --i staggers siblings. */
+
+.rv {
+  opacity: 0;
+  transform: translateY(22px);
+  transition:
+    opacity var(--d-md) var(--e-out),
+    transform var(--d-md) var(--e-out);
+  transition-delay: calc(var(--i, 0) * 70ms);
+  will-change: opacity, transform;
+}
+.rv--sm  { transform: translateY(14px); }
+.rv--pop { transform: translateY(26px) scale(.976); }
+.rv--fade{ transform: none; }
+.rv--right { transform: translateX(46px); }
+.rv--left  { transform: translateX(-46px); }
+
+.is-in .rv, .rv.is-in {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rv { opacity: 1; transform: none; transition: none; }
+}
+
+/* Line-by-line heading rise */
+.line-rise { display: block; overflow: hidden; }
+.line-rise > span {
+  display: block;
+  transform: translateY(105%);
+  transition: transform var(--d-lg) var(--e-out);
+  transition-delay: calc(var(--i, 0) * 90ms);
+}
+.is-in .line-rise > span { transform: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .line-rise > span { transform: none; transition: none; }
+}
+
+/* ---- Marquee --------------------------------------------- */
+
+.marquee { display: flex; overflow: hidden; }
+.marquee__track {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  animation: marquee var(--mq-dur, 38s) linear infinite;
+}
+.marquee:hover .marquee__track { animation-play-state: paused; }
+.marquee--rev .marquee__track { animation-direction: reverse; }
+
+@keyframes marquee { to { transform: translateX(-100%); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee__track { animation: none; }
+}
+
+/* ---- Soft bloom ------------------------------------------ */
+
+.bloom {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  filter: blur(70px);
+  opacity: .55;
+  background: radial-gradient(circle, var(--bloom-c, var(--accent)) 0%, transparent 68%);
+}
+
+/* ---- Utility --------------------------------------------- */
+
+.stack { display: grid; }
+.row { display: flex; align-items: center; }
+.grow { flex: 1 1 auto; }

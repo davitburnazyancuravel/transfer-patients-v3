@@ -1,0 +1,288 @@
+/* ============================================================
+   Crew — the staggered tile marquee.
+
+   Two full-bleed rows drifting opposite ways on the plate's own
+   ground. A pair is a portrait tile with a pastel label tile hung
+   off one bottom corner, overlapping it and the neighbour beside
+   it; every other pair drops, so the band keeps the loose,
+   hand-placed rhythm of the reference instead of settling into a
+   grid.
+
+   Hovering pauses the row (base.css) and fades a small white card
+   up beneath the tile. Because that card lives outside the tile
+   but inside the row's overflow:hidden box, each row reserves a
+   band of padding below itself for it — see --crew-under.
+
+   Everything here is prefixed .crew.
+   ============================================================ */
+
+.crew {
+  background: var(--ground);
+
+  --crew-tile-w: clamp(132px, 12.6vw, 190px);
+  --crew-tile-h: clamp(162px, 15.4vw, 230px);
+  --crew-gap: clamp(14px, 1.6vw, 26px);
+
+  /* How far every other pair falls. */
+  --crew-drop: clamp(16px, 2vw, 28px);
+
+  /* Reserved bands: the hover card below, the hover lift above. The
+     band only sets where the row clips, not how far apart the rows
+     sit, so it is sized for the tallest card — name plus a meta that
+     has turned onto a second line. */
+  --crew-under: 92px;
+  --crew-over: 10px;
+
+  /* What the eye should read between the two rows, once the reserved
+     band above has been discounted. */
+  --crew-rowgap: 34px;
+
+  --crew-lift: 6px;
+}
+
+/* ---- Head ------------------------------------------------- */
+
+.crew__head { max-width: 720px; }
+
+/* .line-rise clips to the line box, which at --lh-tight would shave
+   the descenders. Pad the moving span, not the mask. */
+.crew__title .line-rise > span { padding-bottom: .08em; }
+
+/* ---- Rows ------------------------------------------------- */
+
+.crew__rows {
+  display: grid;
+  /* No gap here: the rows space themselves off --crew-rowgap below,
+     since each one carries a reserved band that has to be discounted
+     first. */
+  gap: 0;
+  margin-top: clamp(38px, 4.6vw, 64px);
+  /* The last row's band sits empty unless something is hovered, so
+     hand it back to the section's own bottom padding. */
+  margin-bottom: calc(var(--crew-under) * -1);
+}
+
+.crew__row {
+  /* Dissolve both ends into the ground so tiles never collide with
+     the plate's rounded edge. Mask stops are alpha, not palette. */
+  --crew-fade: clamp(36px, 8vw, 150px);
+
+  padding-block: var(--crew-over) var(--crew-under);
+
+  /* The reserved band is empty unless a tile is hovered, so it must
+     not push the rows apart. Nothing in it can be clicked or hovered
+     either — the pairs opt back in below — which keeps the first
+     row's dead space from swallowing hovers meant for the second. */
+  pointer-events: none;
+
+  -webkit-mask-image: linear-gradient(
+    90deg,
+    transparent 0,
+    black var(--crew-fade),
+    black calc(100% - var(--crew-fade)),
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    90deg,
+    transparent 0,
+    black var(--crew-fade),
+    black calc(100% - var(--crew-fade)),
+    transparent 100%
+  );
+}
+
+/* Pull the next row up over this one's reserved band, leaving the gap
+   the design actually wants. The upper row keeps painting on top, so
+   a hover card that reaches into the row below floats over it rather
+   than disappearing behind it. */
+.crew__row:not(:last-child) {
+  position: relative;
+  z-index: 1;
+  margin-bottom: calc(var(--crew-rowgap) - var(--crew-under));
+}
+
+/* Both rows hold nine and eight tiles respectively, so equal
+   durations would still read as two different speeds. Setting them
+   apart deliberately keeps the pair from ever looking geared. */
+.crew__row--a { --mq-dur: 64s; }
+.crew__row--b { --mq-dur: 76s; }
+
+.crew__track {
+  /* base.css centres the track; the drop needs a common top edge. */
+  align-items: flex-start;
+  gap: var(--crew-gap);
+  /* Carries the gap across the seam where the duplicate track picks
+     the row back up. */
+  padding-inline-end: var(--crew-gap);
+}
+
+/* ---- A pair ----------------------------------------------- */
+
+.crew__pair {
+  position: relative;
+  flex: 0 0 auto;
+  width: var(--crew-tile-w);
+  /* Opts back in to the hover the row itself declines. :hover still
+     travels up to the row, so base.css can pause the track. */
+  pointer-events: auto;
+}
+
+/* Scoped to a row so the reduced-motion grid below stays level. */
+.crew__row .crew__pair[data-drop] { margin-top: var(--crew-drop); }
+
+/* Deliberately no transform at rest: a transform would open a
+   stacking context here and trap the label tile below the next
+   pair's photograph, which is exactly the overlap we want. */
+.crew__stack {
+  position: relative;
+  transform: none;
+  transition: transform var(--d-sm) var(--e-spring);
+}
+
+.crew__pair:hover .crew__stack {
+  z-index: 3;
+  transform: translateY(calc(var(--crew-lift) * -1));
+}
+
+.crew__tile {
+  position: relative;
+  width: 100%;
+  height: var(--crew-tile-h);
+  border-radius: var(--r-lg);
+  overflow: clip;
+  /* Holds the tile's shape while the photograph loads. */
+  background: var(--card-tint);
+  box-shadow: var(--sh-card);
+}
+
+.crew__photo {
+  object-fit: cover;
+  /* Portraits: sit the face above centre so the label tile lands on
+     shoulders rather than across a chin. */
+  object-position: 50% 28%;
+}
+
+/* The label. z-index lifts it over the photograph of the pair that
+   follows, which is what produces the corner overlap. */
+.crew__role {
+  position: absolute;
+  z-index: 2;
+  bottom: -10px;
+  max-width: calc(var(--crew-tile-w) * .82);
+  padding: 7px 11px;
+  border-radius: var(--r-sm);
+  background: var(--c);
+  /* White on a pastel is thin, and knowingly so: the label is
+     decoration, and the roster at the foot of the section carries
+     every role as real text. */
+  color: var(--on-photo);
+  font-size: var(--fs-micro);
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: -.005em;
+  text-wrap: balance;
+  box-shadow: var(--sh-md);
+}
+
+.crew__pair[data-side="r"] .crew__role { right: -12px; }
+.crew__pair[data-side="l"] .crew__role { left: -12px; }
+
+/* ---- Hover card ------------------------------------------- */
+
+.crew__card {
+  position: absolute;
+  z-index: 4;
+  /* Clears the label tile's 10px of overhang. */
+  top: calc(100% + 16px);
+  /* Wider than the tile it belongs to: at the smallest tile size the
+     longest `meta` needs about 130px, and the card floats over its
+     neighbours anyway. */
+  left: -18px;
+  right: -18px;
+  display: grid;
+  gap: 2px;
+  padding: 8px 12px;
+  border-radius: var(--r-sm);
+  background: var(--card);
+  border: 1px solid var(--line);
+  box-shadow: var(--sh-md);
+  text-align: center;
+  opacity: 0;
+  transform: translateY(8px);
+  transition:
+    opacity var(--d-sm) var(--e-out),
+    transform var(--d-sm) var(--e-out);
+  /* Never let the card steal the hover that summoned it. */
+  pointer-events: none;
+}
+
+.crew__pair:hover .crew__card {
+  opacity: 1;
+  transform: none;
+}
+
+/* The name holds one line — every name in the roster fits, and a
+   wrapped one would only push the meta about. The meta is allowed to
+   turn, which is why the row reserves two lines' worth of band. */
+.crew__name {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--ink);
+}
+
+.crew__metaLine {
+  font-size: var(--fs-micro);
+  line-height: 1.3;
+  color: var(--meta);
+  text-wrap: pretty;
+}
+
+/* ---- Reduced-motion stand-in ------------------------------ */
+
+.crew__static { display: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  /* base.css already freezes .marquee__track, but a frozen row is a
+     row cut off mid-tile at both ends. Replace it outright. */
+  .crew__rows { display: none; }
+
+  /* Four across, so the eight land as a deliberate block rather than
+     as a row of six and an orphaned pair. Nothing clips here, so the
+     row gap only has to clear the label overhang — a hover card is
+     free to float over the line below. */
+  .crew__static {
+    display: grid;
+    grid-template-columns: repeat(4, var(--crew-tile-w));
+    justify-content: center;
+    gap: 52px var(--crew-gap);
+    margin-top: clamp(38px, 4.6vw, 64px);
+    padding-inline: var(--gutter);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) and (max-width: 680px) {
+  .crew__static { grid-template-columns: repeat(2, var(--crew-tile-w)); }
+}
+
+/* ---- Touch ------------------------------------------------ */
+
+@media (hover: none) {
+  /* No hover means no card, so the rows stop holding a band open for
+     one and close up to something sensible on a phone. */
+  .crew { --crew-under: 20px; }
+  .crew__card { display: none; }
+}
+
+/* ---- Responsive ------------------------------------------- */
+
+@media (max-width: 700px) {
+  /* Tighter corners at this size: a 12px overhang on a 132px tile
+     starts to look like a mistake rather than a stack. */
+  .crew__pair[data-side="r"] .crew__role { right: -8px; }
+  .crew__pair[data-side="l"] .crew__role { left: -8px; }
+  .crew__role { padding: 6px 9px; }
+}

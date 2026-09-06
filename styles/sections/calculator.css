@@ -1,0 +1,868 @@
+/* ============================================================
+   Calculator — the reference's pricing block, doing real work.
+
+   Three white cards across a pale tinted ground: plate icon,
+   title, one big live figure, a hairline rule, then whatever that
+   card is for — the inputs, the map, the answer. Nothing here is
+   a dark slab; the only weight on the section is the accent, and
+   it is spent on the selected control, the route and the gauge.
+
+   Everything is prefixed .calc / .calc-*.
+   ============================================================ */
+
+.calc {
+  --card-pad: clamp(20px, 2.1vw, 28px);
+  --block-gap: clamp(18px, 1.9vw, 24px);
+  /* Inset of the segmented control's track, and the width its
+     thumb has to travel across three care levels. */
+  --seg-pad: 4px;
+  --seg-n: 3;
+}
+
+.calc__head {
+  /* A touch narrower than the default so the three-card row below
+     reads as the wider object. */
+  max-width: 640px;
+}
+
+/* ---- The three-card row ----------------------------------- */
+
+.calc__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(14px, 1.5vw, 22px);
+  margin-top: clamp(34px, 4.4vw, 58px);
+}
+
+.calc__card {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: var(--card-pad);
+  border-radius: var(--r-xl);
+}
+
+/* ---- Card head -------------------------------------------- */
+
+.calc__cardHead {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  column-gap: 12px;
+  row-gap: 6px;
+}
+
+.calc__plate {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: var(--r-sm);
+  background: var(--accent-wash);
+  color: var(--accent);
+}
+.calc__plate svg { width: 16px; height: 16px; }
+
+.calc__cardTitle {
+  font-size: var(--fs-lg);
+  font-weight: 600;
+  color: var(--ink);
+  line-height: var(--lh-snug);
+}
+
+/* Live pill — the map card is the one that keeps recomputing. */
+.calc__live {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 4px 11px;
+  border-radius: var(--r-pill);
+  background: var(--accent-wash);
+  color: var(--accent-deep);
+  font-size: var(--fs-eyebrow);
+  font-weight: 600;
+  letter-spacing: var(--tr-eyebrow);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.calc__liveDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  animation: calc-pulse 2.4s var(--e-in-out) infinite;
+}
+
+@keyframes calc-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%      { opacity: .4; transform: scale(.72); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .calc__liveDot { animation: none; }
+}
+
+/* The figure is the pricing card's price: one number per card,
+   sitting where the eye lands after the title. */
+.calc__figure {
+  grid-column: 1 / -1;
+  margin-top: 14px;
+  font-size: var(--fs-stat);
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -.03em;
+  color: var(--ink);
+}
+
+.calc__figureNote {
+  grid-column: 1 / -1;
+  font-size: var(--fs-sm);
+  color: var(--meta);
+}
+
+.calc__rule {
+  margin-block: var(--block-gap);
+}
+
+/* ---- Card body -------------------------------------------- */
+
+.calc__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--block-gap);
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+/* Cards are stretched to the tallest of the three; spreading the
+   groups is how the short ones spend that height without leaving
+   a pool of white under the last control. */
+.calc__body--spread { justify-content: space-between; }
+
+.calc__cta {
+  margin-top: auto;
+  align-self: flex-start;
+}
+
+/* ---- Fields ----------------------------------------------- */
+
+.calc-field {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.calc-field__legend {
+  padding: 0;
+  margin-bottom: 10px;
+  font-size: var(--fs-eyebrow);
+  font-weight: 600;
+  letter-spacing: var(--tr-eyebrow);
+  text-transform: uppercase;
+  color: var(--meta);
+}
+
+/* Radio rows ---------------------------------------------------
+   Real inputs, moved out of the flow rather than hidden, so they
+   keep focus and keyboard arrow-key behaviour. */
+
+.calc-opts { display: grid; gap: 2px; }
+
+.calc-opt {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 9px 12px;
+  border-radius: var(--r-sm);
+  cursor: pointer;
+  transition: background-color var(--d-sm) var(--e-out);
+}
+
+.calc-opt:hover { background: var(--line-soft); }
+.calc-opt:has(.calc-opt__input:checked) { background: var(--accent-wash); }
+
+.calc-opt__input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+  margin: 0;
+}
+
+.calc-opt__ring {
+  display: grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  flex: 0 0 18px;
+  border-radius: 50%;
+  border: 1.5px solid var(--line-strong);
+  background: var(--card);
+  transition:
+    border-color var(--d-sm) var(--e-out),
+    background-color var(--d-sm) var(--e-out);
+}
+
+.calc-opt__ring::after {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--on-photo);
+  transform: scale(0);
+  transition: transform var(--d-sm) var(--e-spring);
+}
+
+.calc-opt__input:checked + .calc-opt__ring {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+.calc-opt__input:checked + .calc-opt__ring::after { transform: scale(1); }
+
+.calc-opt__input:focus-visible + .calc-opt__ring {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+.calc-opt__label {
+  font-size: var(--fs-sm);
+  color: var(--body);
+  transition: color var(--d-sm) var(--e-out);
+}
+
+.calc-opt__input:checked ~ .calc-opt__label {
+  color: var(--ink);
+  font-weight: 500;
+}
+
+/* Segmented control -------------------------------------------
+   One thumb slides between three slots; the faces above it only
+   ever change colour, so nothing reflows as the choice moves. */
+
+.calc-seg {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(var(--seg-n), minmax(0, 1fr));
+  padding: var(--seg-pad);
+  border-radius: var(--r-pill);
+  background: var(--card-tint);
+}
+
+.calc-seg__thumb {
+  position: absolute;
+  top: var(--seg-pad);
+  bottom: var(--seg-pad);
+  left: var(--seg-pad);
+  width: calc((100% - var(--seg-pad) * 2) / var(--seg-n));
+  border-radius: var(--r-pill);
+  background: var(--grad-cta);
+  box-shadow: var(--sh-cta);
+  transform: translateX(calc(var(--seg-i, 0) * 100%));
+  transition: transform var(--d-md) var(--e-spring);
+}
+
+.calc-seg__slot {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  cursor: pointer;
+}
+
+.calc-seg__input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+  margin: 0;
+}
+
+.calc-seg__face {
+  display: grid;
+  place-items: center;
+  padding: 9px 6px;
+  border-radius: var(--r-pill);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  letter-spacing: .04em;
+  color: var(--ink-2);
+  transition: color var(--d-sm) var(--e-out);
+}
+
+.calc-seg__input:checked + .calc-seg__face { color: var(--on-photo); }
+
+.calc-seg__input:focus-visible + .calc-seg__face {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+/* ---- Map --------------------------------------------------- */
+
+/* The map takes whatever height the card has left over and centres
+   the drawing in it, so the card's spare space collects in one
+   place instead of prising the readouts apart. */
+.calc-map {
+  flex: 1 1 auto;
+  display: grid;
+  place-items: center;
+  min-height: 0;
+  /* Labels for the chosen pair reach past the drawing; letting them
+     spill into the card's padding is cheaper than shrinking the map
+     to fit its own captions. */
+  overflow: visible;
+}
+
+.calc-map__frame {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 520 / 448;
+}
+
+.calc-map__svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* Pale land, hairline cartography — the map is a diagram, not a
+   photograph, and it stays on the white side of the palette. */
+
+.calc-map__land {
+  fill: var(--card-tint);
+  stroke: var(--line-strong);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.calc-map__grid {
+  fill: none;
+  stroke: var(--line-strong);
+  stroke-width: 1;
+  stroke-opacity: .55;
+  vector-effect: non-scaling-stroke;
+}
+
+.calc-map__river {
+  fill: none;
+  stroke: var(--accent);
+  stroke-opacity: .18;
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+
+.calc-map__road {
+  fill: none;
+  stroke: var(--accent);
+  stroke-opacity: .22;
+  stroke-width: 1;
+  stroke-dasharray: 3 7;
+  vector-effect: non-scaling-stroke;
+}
+
+.calc-map__ring {
+  fill: none;
+  stroke: var(--accent);
+  stroke-opacity: .16;
+  stroke-width: 1;
+  stroke-dasharray: 6 8;
+  vector-effect: non-scaling-stroke;
+}
+
+/* Route: a soft body that draws itself in, and a dashed line that
+   keeps flowing along it. pathLength="1" lets the draw-in run in
+   CSS without measuring the path in JavaScript. */
+
+.calc-map__routeDraw {
+  fill: none;
+  stroke: var(--accent);
+  stroke-opacity: .2;
+  stroke-width: 5;
+  stroke-linecap: round;
+  stroke-dasharray: 1;
+  animation: calc-draw var(--d-lg) var(--e-soft) both;
+}
+
+@keyframes calc-draw {
+  from { stroke-dashoffset: 1; }
+  to   { stroke-dashoffset: 0; }
+}
+
+.calc-map__routeFlow {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-dasharray: 5 9;
+  vector-effect: non-scaling-stroke;
+  animation:
+    calc-flow 1.4s linear infinite,
+    calc-fade var(--d-md) var(--e-out) both;
+}
+
+@keyframes calc-flow {
+  to { stroke-dashoffset: -14; }
+}
+
+@keyframes calc-fade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .calc-map__routeDraw,
+  .calc-map__routeFlow { animation: none; }
+}
+
+/* Pins ---------------------------------------------------------
+   Real buttons over the drawing rather than SVG shapes with a
+   role: they focus, they tab in document order, and their labels
+   wrap like HTML instead of running off the canvas. */
+
+.calc-map__pins {
+  position: absolute;
+  inset: 0;
+}
+
+.calc-map__pin {
+  position: absolute;
+  left: var(--px);
+  top: var(--py);
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  margin: -14px 0 0 -14px;
+  border-radius: 50%;
+  transition: transform var(--d-xs) var(--e-spring);
+}
+
+.calc-map__pin:hover,
+.calc-map__pin:focus-visible { z-index: 3; transform: scale(1.12); }
+.calc-map__pin[data-role] { z-index: 2; }
+
+.calc-map__dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--card);
+  border: 1.5px solid var(--accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 9%, transparent);
+  transition:
+    background-color var(--d-sm) var(--e-out),
+    box-shadow var(--d-sm) var(--e-out),
+    width var(--d-sm) var(--e-spring),
+    height var(--d-sm) var(--e-spring);
+}
+
+.calc-map__pin[data-role="from"] .calc-map__dot {
+  width: 12px;
+  height: 12px;
+  background: var(--accent);
+  box-shadow: 0 0 0 5px var(--accent-ring);
+}
+
+.calc-map__pin[data-role="to"] .calc-map__dot {
+  width: 12px;
+  height: 12px;
+  border-width: 3.5px;
+  border-color: var(--accent-deep);
+  box-shadow: 0 0 0 5px var(--accent-ring);
+}
+
+/* Only the chosen pair is named on the map; the rest carry their
+   name on the button itself. */
+.calc-map__label {
+  position: absolute;
+  top: 50%;
+  left: 100%;
+  display: grid;
+  gap: 1px;
+  /* The pin is its containing block, so without an explicit
+     max-content width the chip would collapse to the longest word
+     in the facility's name. The cap is what allows a wrap. */
+  width: max-content;
+  max-width: 124px;
+  padding: 4px 9px;
+  border-radius: var(--r-xs);
+  background: var(--card);
+  border: 1px solid var(--line);
+  box-shadow: var(--sh-sm);
+  text-align: left;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-50%) scale(.9);
+  transform-origin: left center;
+  transition:
+    opacity var(--d-sm) var(--e-out),
+    transform var(--d-sm) var(--e-spring),
+    visibility 0s linear var(--d-sm);
+}
+
+.calc-map__pin[data-anchor="end"] .calc-map__label {
+  left: auto;
+  right: 100%;
+  text-align: right;
+  transform-origin: right center;
+}
+
+.calc-map__pin[data-role] .calc-map__label {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(-50%) scale(1);
+  transition-delay: 0s;
+}
+
+.calc-map__tag {
+  font-size: var(--fs-eyebrow);
+  font-weight: 600;
+  letter-spacing: var(--tr-eyebrow);
+  text-transform: uppercase;
+  color: var(--accent);
+  line-height: 1.2;
+}
+
+.calc-map__name {
+  font-size: var(--fs-micro);
+  font-weight: 500;
+  color: var(--ink);
+  line-height: 1.25;
+}
+
+/* ---- Route readout ---------------------------------------- */
+
+.calc-route {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: var(--r-md);
+  background: var(--panel-2);
+}
+
+.calc-route__leg {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+  flex: 1 1 0;
+}
+
+.calc-route__leg--to { text-align: right; }
+
+.calc-route__tag {
+  font-size: var(--fs-eyebrow);
+  font-weight: 600;
+  letter-spacing: var(--tr-eyebrow);
+  text-transform: uppercase;
+  color: var(--meta);
+}
+
+.calc-route__name {
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  color: var(--ink);
+  line-height: 1.3;
+  text-wrap: balance;
+}
+
+.calc-route__arrow {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  flex: 0 0 26px;
+  border-radius: 50%;
+  background: var(--card);
+  color: var(--accent);
+  box-shadow: var(--sh-xs);
+}
+.calc-route__arrow svg { width: 13px; height: 13px; }
+
+.calc-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.calc-hint {
+  font-size: var(--fs-micro);
+  color: var(--meta);
+  min-width: 0;
+  flex: 1 1 120px;
+}
+
+.calc-presets {
+  display: flex;
+  gap: 6px;
+  flex: 0 0 auto;
+}
+
+.calc-preset {
+  padding: 6px 14px;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--line);
+  background: var(--card);
+  font-size: var(--fs-micro);
+  font-weight: 500;
+  color: var(--ink-2);
+  transition:
+    background-color var(--d-sm) var(--e-out),
+    border-color var(--d-sm) var(--e-out),
+    color var(--d-sm) var(--e-out);
+}
+
+.calc-preset:hover { border-color: var(--line-strong); }
+
+.calc-preset[aria-pressed="true"] {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--on-photo);
+}
+
+/* ---- Result blocks ---------------------------------------- */
+
+.calc-block {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+}
+
+.calc-block__h {
+  font-size: var(--fs-eyebrow);
+  font-weight: 600;
+  letter-spacing: var(--tr-eyebrow);
+  text-transform: uppercase;
+  color: var(--meta);
+}
+
+.calc-block__val {
+  font-size: var(--fs-h3);
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -.02em;
+  color: var(--ink);
+}
+
+.calc-block__val--cost { white-space: nowrap; }
+
+.calc-block__note {
+  font-size: var(--fs-micro);
+  color: var(--meta);
+}
+
+/* Gauge --------------------------------------------------------
+   A half-circle normalised with pathLength="100", so the value
+   arc's dash array is literally the percentage. */
+
+.calc-gauge {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  margin-top: 4px;
+}
+
+.calc-gauge__svg {
+  width: min(100%, 240px);
+  height: auto;
+}
+
+.calc-gauge__track {
+  fill: none;
+  stroke: var(--card-tint);
+  stroke-width: 13;
+  stroke-linecap: round;
+}
+
+.calc-gauge__value {
+  fill: none;
+  stroke: url(#calcGaugeGrad);
+  stroke-width: 13;
+  stroke-linecap: round;
+}
+
+.calc-gauge__stop--a { stop-color: var(--accent-hi); }
+.calc-gauge__stop--b { stop-color: var(--accent); }
+.calc-gauge__stop--c { stop-color: var(--accent-deep); }
+
+.calc-gauge__read {
+  position: absolute;
+  inset: auto 0 4% 0;
+  display: grid;
+  justify-items: center;
+  gap: 2px;
+}
+
+.calc-gauge__pct {
+  font-size: var(--fs-stat);
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -.04em;
+  color: var(--ink);
+}
+
+.calc-gauge__sign {
+  font-size: var(--fs-lg);
+  font-weight: 500;
+  color: var(--meta);
+  margin-left: 2px;
+}
+
+.calc-gauge__note {
+  font-size: var(--fs-micro);
+  color: var(--meta);
+}
+
+/* Time on road ------------------------------------------------- */
+
+.calc-segs {
+  display: flex;
+  gap: 4px;
+  margin-block: 2px;
+}
+
+.calc-seg-bar {
+  flex: 1 1 0;
+  height: 10px;
+  border-radius: var(--r-xs);
+  background: var(--card-tint);
+  transition: background-color var(--d-sm) var(--e-out);
+  /* Fills left to right rather than all at once. */
+  transition-delay: calc(var(--i, 0) * 45ms);
+}
+
+.calc-seg-bar.is-on { background: var(--accent); }
+
+/* Crew --------------------------------------------------------- */
+
+.calc-crew {
+  display: grid;
+  gap: 10px;
+}
+
+.calc-crew__item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  animation: calc-rise var(--d-md) var(--e-out) both;
+  animation-delay: calc(var(--i, 0) * 70ms);
+}
+
+@keyframes calc-rise {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .calc-crew__item { animation: none; }
+}
+
+.calc-crew__pic {
+  width: 44px;
+  height: 44px;
+  flex: 0 0 44px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: var(--card-tint);
+  box-shadow: 0 0 0 1px var(--line);
+}
+
+.calc-crew__txt {
+  display: grid;
+  gap: 1px;
+  min-width: 0;
+}
+
+.calc-crew__txt strong {
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1.25;
+}
+
+.calc-crew__txt em {
+  font-style: normal;
+  font-size: var(--fs-micro);
+  color: var(--meta);
+  line-height: 1.3;
+}
+
+/* Plan --------------------------------------------------------- */
+
+.calc-plan { gap: 10px; }
+.calc-plan li { font-size: var(--fs-sm); align-items: flex-start; }
+.calc-plan .tick { margin-top: 2px; }
+
+/* Cost --------------------------------------------------------- */
+
+.calc-bar {
+  position: relative;
+  height: 10px;
+  border-radius: var(--r-pill);
+  background: var(--card-tint);
+  overflow: hidden;
+}
+
+.calc-bar__fill {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  border-radius: var(--r-pill);
+  background: var(--grad-cta);
+  transition:
+    left var(--d-md) var(--e-out),
+    width var(--d-md) var(--e-out);
+}
+
+/* The ends of the scale, not the estimate — quiet, but readable. */
+.calc-bar__ends {
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--fs-micro);
+  color: var(--meta);
+}
+
+/* ---- Responsive -------------------------------------------- */
+
+@media (max-width: 1120px) {
+  .calc__figure { font-size: var(--fs-h2); }
+  .calc-gauge__pct { font-size: var(--fs-h2); }
+}
+
+@media (max-width: 1000px) {
+  /* Stacked, the row becomes a single readable column rather than
+     three full-width slabs. */
+  .calc__grid {
+    grid-template-columns: minmax(0, 1fr);
+    max-width: 620px;
+    margin-inline: auto;
+  }
+
+  .calc__body--spread { justify-content: flex-start; }
+
+  .calc-map__frame { max-width: 460px; }
+  .calc-gauge__svg { width: min(100%, 280px); }
+}
+
+@media (max-width: 560px) {
+  .calc__cardHead { column-gap: 10px; }
+  .calc-opt { padding: 8px 10px; }
+  .calc-route { flex-wrap: wrap; }
+}
+
+@media (max-width: 400px) {
+  /* At the narrow end the London pins sit close together, so the
+     hit areas come down to the 24px floor rather than overlapping
+     each other. The pins are also in the tab order, which is the
+     path that never depends on how far apart they land. */
+  .calc-map__pin {
+    width: 24px;
+    height: 24px;
+    margin: -12px 0 0 -12px;
+  }
+  .calc-map__label { max-width: 108px; }
+  .calc-segs { gap: 3px; }
+  .calc__cta { align-self: stretch; justify-content: space-between; }
+}

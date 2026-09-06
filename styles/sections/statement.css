@@ -1,0 +1,81 @@
+/* ============================================================
+   Curavel v3 — statement
+
+   One sentence on the bare ground, read out by the scroll. The
+   section carries a single scroll-linked custom property, --p
+   (0 → 1); each word carries its index, --w. Everything else is
+   arithmetic: no per-word timers, no per-frame JS, no layout.
+
+   Colours are sampled from the reference recording — unrevealed
+   words sit at --ghost, revealed ones settle at --ink-muted, and
+   the emphasis phrases stay at full --ink throughout, so the
+   argument still reads as the argument once the reveal is done.
+   ============================================================ */
+
+.stmt {
+  background: var(--ground);
+
+  /* Deliberately over-padded. The emptiness is the point, and it
+     is also the runway the reveal needs to play out in. */
+  padding-block: calc(var(--sec-y) * 1.6);
+
+  /* Scroll progress. The client wrapper writes this and nothing
+     else; every word below reads it. Zero until JS says otherwise
+     — the section starts well below the fold, so the ghost state
+     is the honest first paint. */
+  --p: 0;
+
+  /* Reveal runs a word and a half past the end of the sentence so
+     the last word is fully settled before --p tops out. */
+  --stmt-run: calc(var(--total, 1) + 1.5);
+
+  /* Reciprocal of the crossfade width in words: .5 keeps about two
+     words mid-flight at any moment, as in the reference. */
+  --stmt-soft: .5;
+}
+
+.stmt__text {
+  /* ~34 characters a line at the top of the display scale, which
+     lands the sentence in three or four lines on a desktop. */
+  max-width: 17em;
+  margin-inline: auto;
+
+  font-size: var(--fs-display);
+  font-weight: 500;
+  line-height: var(--lh-snug);
+  letter-spacing: -.022em;
+  text-align: center;
+  text-wrap: balance;
+}
+
+.stmt__w {
+  /* How far this word has travelled, 0 → 1. --p advances the
+     leading edge along the sentence; --w is where the word stands
+     in the queue; --stmt-soft is how sharp that edge is. */
+  --t: clamp(0, calc((var(--p) * var(--stmt-run) - var(--w, 0)) * var(--stmt-soft)), 1);
+
+  /* Fallback first: an engine without color-mix keeps the settled
+     colour and simply misses the reveal, never the other way
+     round — the sentence is always legible. */
+  color: var(--ink-muted);
+  color: color-mix(in oklab, var(--ink-muted) calc(var(--t) * 100%), var(--ghost));
+}
+
+/* The phrase that carries the sentence: ink from the first frame,
+   and a shade deeper than the words that catch up to it. */
+.stmt__w--anchor {
+  color: var(--ink);
+}
+
+/* No scroll, no JS, no reveal — settle the whole sentence. Both
+   rules must outrank the base .stmt declaration, so they sit last;
+   an inline --p from the scroll handler outranks them in turn, and
+   that handler never runs in either case. */
+
+@media (prefers-reduced-motion: reduce) {
+  .stmt { --p: 1; }
+}
+
+@media (scripting: none) {
+  .stmt { --p: 1; }
+}

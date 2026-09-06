@@ -1,0 +1,445 @@
+/* ============================================================
+   Services — the numbered stepper.
+
+   Two layouts from one set of markup.
+
+   The default, written first, is the plain stacked list: five
+   items down the page, photograph above copy, nothing hidden.
+   That is what a narrow screen gets, what a reader who has asked
+   for less motion gets, and what a browser with no JavaScript
+   gets — the section root only becomes data-mode="pinned" once
+   the client has measured the viewport and found it worth it.
+
+   The second, at the foot of this file, is the pinned stage:
+   rail | photograph | copy, held still while the track scrolls
+   past it, one item faded in at a time.
+
+   Everything here is prefixed .svc. White ground throughout —
+   the only dark is the photography.
+   ============================================================ */
+
+.svc {
+  /* How far the tinted plate escapes the photograph, down-left.
+     Scales with the gutter so it never reaches past the plate
+     edge at 360px. */
+  --svc-plate-off: clamp(14px, 2.4vw, 26px);
+
+  /* The frosted chip's right edge, relative to the photograph's.
+     Negative once there is room for it to hang off the corner. */
+  --svc-chip-x: 14px;
+
+  --svc-dot: 34px;
+  --svc-rail-w: 34px;
+
+  /* Pinned mode only: the photograph is sized from the viewport
+     height so the whole stage always fits between the header and
+     the fold. */
+  --svc-shot-h: clamp(320px, 52vh, 540px);
+
+  /* Pinned mode only: scroll spent on each of the five. */
+  --svc-step-h: 90vh;
+}
+
+/* ---- Head ------------------------------------------------- */
+
+.svc__head { max-width: 730px; }
+
+/* .line-rise clips to the line box, which would shave the tails
+   off "every" and "y" at --lh-tight. Pad the moving span. */
+.svc__title .line-rise > span { padding-bottom: .08em; }
+
+/* ---- Track and stage -------------------------------------- */
+
+.svc__track { margin-top: clamp(40px, 5vw, 72px); }
+
+.svc__stage {
+  display: grid;
+  gap: clamp(26px, 3.2vw, 52px);
+}
+
+.svc__items {
+  display: grid;
+  gap: clamp(58px, 7vw, 92px);
+}
+
+.svc__item {
+  display: grid;
+  gap: clamp(22px, 3vw, 34px);
+  align-content: start;
+  /* Room on the left for the plate to escape into. Both columns
+     take it, so photograph and copy stay flush with each other. */
+  padding-left: var(--svc-plate-off);
+}
+
+/* ---- The photograph --------------------------------------- */
+
+.svc__media {
+  display: flex;
+  justify-content: flex-start;
+  /* And room below, for the same reason. */
+  padding-bottom: var(--svc-plate-off);
+}
+
+.svc__frame {
+  position: relative;
+  width: 100%;
+  max-width: 460px;
+}
+
+/* The tinted plate: the photograph's own box, shifted down and
+   left, in the item's accent wash. */
+.svc__plate {
+  position: absolute;
+  inset:
+    var(--svc-plate-off)
+    var(--svc-plate-off)
+    calc(-1 * var(--svc-plate-off))
+    calc(-1 * var(--svc-plate-off));
+  border-radius: var(--r-xl);
+  background: var(--c-wash);
+}
+
+/* No overflow clip here — the frosted chip is supposed to hang
+   off the right edge, so the image rounds its own corners. */
+.svc__shot {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  border-radius: var(--r-xl);
+  background: var(--card-tint);
+  box-shadow: var(--sh-lg);
+}
+
+.svc__img {
+  object-fit: cover;
+  border-radius: inherit;
+}
+
+/* Frosted chip, floating over the photograph's right edge. */
+.svc__chip {
+  position: absolute;
+  z-index: 2;
+  top: clamp(16px, 4%, 26px);
+  right: var(--svc-chip-x);
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  max-width: calc(100% - 24px);
+  padding: 8px 15px;
+  border-radius: var(--r-pill);
+  background: var(--glass-strong);
+  border: 1px solid var(--glass-line);
+  backdrop-filter: blur(14px) saturate(1.3);
+  -webkit-backdrop-filter: blur(14px) saturate(1.3);
+  box-shadow: var(--sh-md);
+  font-size: var(--fs-micro);
+  font-weight: 600;
+  line-height: var(--lh-snug);
+  color: var(--ink);
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.svc__chipDot {
+  width: 8px;
+  height: 8px;
+  flex: 0 0 8px;
+  border-radius: 50%;
+  background: var(--c);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--c) 26%, transparent);
+}
+
+/* Translucent card in the bottom-left corner of the photograph. */
+.svc__facts {
+  position: absolute;
+  z-index: 2;
+  left: 16px;
+  bottom: 16px;
+  display: grid;
+  gap: 9px;
+  max-width: min(80%, 268px);
+  padding: 13px 16px;
+  border-radius: var(--r-md);
+  background: var(--glass-strong);
+  border: 1px solid var(--glass-line);
+  backdrop-filter: blur(14px) saturate(1.3);
+  -webkit-backdrop-filter: blur(14px) saturate(1.3);
+  box-shadow: var(--sh-md);
+}
+
+.svc__fact {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: var(--fs-micro);
+  line-height: 1.4;
+  color: var(--ink-2);
+}
+
+.svc__fact::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  flex: 0 0 6px;
+  /* Sits on the first line's optical centre. */
+  margin-top: .42em;
+  border-radius: 50%;
+  background: var(--c);
+}
+
+/* An 82% white film is thin enough to read ink through without a
+   blur behind it, so the fallback simply pays in opacity. */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .svc__chip,
+  .svc__facts { background: color-mix(in srgb, var(--ground-2) 94%, transparent); }
+}
+
+/* ---- Copy ------------------------------------------------- */
+
+.svc__copy {
+  display: grid;
+  align-content: center;
+  justify-items: start;
+  gap: 16px;
+  min-width: 0;
+}
+
+.svc__lead {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.svc__num {
+  display: inline-grid;
+  place-items: center;
+  min-width: 30px;
+  height: 24px;
+  padding-inline: 8px;
+  border-radius: var(--r-pill);
+  background: var(--c-wash);
+  font-size: var(--fs-micro);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: color-mix(in srgb, var(--c) 42%, var(--ink));
+}
+
+/* Sentence case, not another uppercase eyebrow — these run to
+   forty characters and the section head above already shouts once. */
+.svc__kicker {
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  letter-spacing: -.008em;
+  line-height: 1.35;
+  /* The pastels are far too pale to set type in on white, so each
+     one is dragged most of the way to ink and keeps only its hue. */
+  color: color-mix(in srgb, var(--c) 36%, var(--ink));
+}
+
+/* A shade above .h3 and a shade under .h2 — the stepper's name is
+   the loudest thing in the copy column but never competes with the
+   section head. Derived from the token so it tracks the scale. */
+.svc__name {
+  font-size: calc(var(--fs-h3) * 1.1);
+  font-weight: 600;
+  line-height: var(--lh-snug);
+  letter-spacing: -.026em;
+  color: var(--ink);
+  text-wrap: balance;
+}
+
+.svc__text {
+  max-width: 46ch;
+  color: var(--body);
+  text-wrap: pretty;
+}
+
+.svc__ticks {
+  margin-top: 4px;
+  font-size: var(--fs-sm);
+}
+
+.svc__more { margin-top: 6px; }
+
+/* ---- Closing CTA ------------------------------------------ */
+
+.svc__cta {
+  display: flex;
+  justify-content: center;
+  margin-top: clamp(46px, 5.4vw, 78px);
+}
+
+/* ---- The rail --------------------------------------------- */
+/* Off entirely in the stacked list — there is no single active
+   step for it to point at. */
+
+.svc__rail { display: none; }
+
+.svc__step {
+  position: relative;
+  z-index: 1;
+  flex: 0 0 auto;
+}
+
+.svc__dot {
+  display: grid;
+  place-items: center;
+  width: var(--svc-dot);
+  height: var(--svc-dot);
+  border-radius: 50%;
+  background: var(--ground-2);
+  border: 1px solid var(--line-strong);
+  font-size: var(--fs-micro);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  color: var(--meta);
+  transition:
+    background-color var(--d-sm) var(--e-out),
+    border-color var(--d-sm) var(--e-out),
+    color var(--d-sm) var(--e-out),
+    box-shadow var(--d-sm) var(--e-out);
+}
+
+/* Steps the fill has already run past keep their outline, but take
+   the live accent so the hairline does not thread grey rings. */
+.svc__step[data-done="true"] .svc__dot {
+  border-color: color-mix(in srgb, var(--c) 60%, var(--line-strong));
+}
+
+.svc__step[data-on="true"] .svc__dot {
+  background: var(--c);
+  border-color: var(--c);
+  color: var(--on-photo);
+  box-shadow: 0 0 0 5px var(--c-wash);
+}
+
+/* ============================================================
+   Pinned mode.
+
+   Only ever reached with JavaScript running, a viewport at least
+   900px wide and no reduced-motion preference — the client sets
+   data-mode. The width is repeated here so the stacked list stays
+   a CSS guarantee rather than a promise made by a matchMedia call.
+   ============================================================ */
+
+@media (min-width: 900px) {
+  .svc[data-mode="pinned"] {
+    --svc-chip-x: -20px;
+  }
+
+  .svc[data-mode="pinned"] .svc__track {
+    /* --svc-count is set inline from SERVICES.items.length; the
+       fallback only matters if that inline style ever goes missing. */
+    min-height: calc(var(--svc-count, 5) * var(--svc-step-h));
+  }
+
+  .svc[data-mode="pinned"] .svc__sticky {
+    position: sticky;
+    /* Read back by the scroll handler, so the pin offset stays a
+       CSS decision — keep it a resolvable length. */
+    top: calc(var(--header-h) + clamp(16px, 3vh, 40px));
+  }
+
+  .svc[data-mode="pinned"] .svc__stage {
+    grid-template-columns: var(--svc-rail-w) minmax(0, 1fr);
+    align-items: stretch;
+  }
+
+  /* All five share one grid cell, so the stage takes the height of
+     the tallest and never resizes as the step changes. */
+  .svc[data-mode="pinned"] .svc__items { gap: 0; }
+
+  .svc[data-mode="pinned"] .svc__item {
+    grid-area: 1 / 1;
+    grid-template-columns: minmax(0, .92fr) minmax(0, 1.08fr);
+    gap: clamp(30px, 4vw, 64px);
+    align-items: center;
+    padding-left: 0;
+    opacity: 0;
+    transform: translateY(20px);
+    pointer-events: none;
+    transition:
+      opacity var(--d-md) var(--e-out),
+      transform var(--d-md) var(--e-out);
+  }
+
+  .svc[data-mode="pinned"] .svc__item[data-on="true"] {
+    opacity: 1;
+    transform: none;
+    pointer-events: auto;
+  }
+
+  .svc[data-mode="pinned"] .svc__media { padding-left: var(--svc-plate-off); }
+
+  /* Height-led, so the pair always clears the fold. */
+  .svc[data-mode="pinned"] .svc__frame {
+    width: min(100%, calc(var(--svc-shot-h) * 4 / 5));
+    max-width: none;
+  }
+
+  /* The rail numbers the steps here, so the copy need not. */
+  .svc[data-mode="pinned"] .svc__num { display: none; }
+
+  .svc[data-mode="pinned"] .svc__rail {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    width: var(--svc-rail-w);
+  }
+
+  /* The hairline runs dot centre to dot centre… */
+  .svc[data-mode="pinned"] .svc__rail::before,
+  .svc[data-mode="pinned"] .svc__rail::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    width: 2px;
+    margin-left: -1px;
+    border-radius: var(--r-pill);
+  }
+
+  .svc[data-mode="pinned"] .svc__rail::before {
+    top: calc(var(--svc-dot) / 2);
+    bottom: calc(var(--svc-dot) / 2);
+    background: var(--line);
+  }
+
+  /* …and the fill claims --fill of it, in the live accent. */
+  .svc[data-mode="pinned"] .svc__rail::after {
+    top: calc(var(--svc-dot) / 2);
+    height: calc(var(--fill, 0) * (100% - var(--svc-dot)));
+    background: var(--c);
+    transition:
+      height var(--d-md) var(--e-out),
+      background-color var(--d-md) var(--e-out);
+  }
+}
+
+/* ---- Responsive ------------------------------------------- */
+
+@media (max-width: 560px) {
+  .svc__facts {
+    left: 12px;
+    bottom: 12px;
+    max-width: calc(100% - 24px);
+    padding: 12px 14px;
+  }
+
+  .svc__chip { padding: 7px 13px; }
+
+  .svc__text { font-size: var(--fs-sm); }
+}
+
+/* Belt and braces: nothing in the pinned block can reach a reader
+   who has asked for stillness, whatever the client decided. */
+@media (prefers-reduced-motion: reduce) {
+  .svc__item,
+  .svc__dot {
+    transition: none;
+  }
+}

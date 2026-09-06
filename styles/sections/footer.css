@@ -1,0 +1,280 @@
+/* ============================================================
+   Curavel v3 — footer
+
+   White-first, like the rest of the page: the block sits on the
+   plate's own --ground so the top edge reads as a change of
+   rhythm rather than a slab. All the visual weight is carried by
+   one enormous ghost wordmark that runs off the bottom of the
+   plate and gets cropped by it.
+   ============================================================ */
+
+.ft {
+  position: relative;
+  background: var(--ground);
+  /* No bottom padding — the wordmark is supposed to fall off the
+     end of the plate, and any padding would pull it back inside. */
+  padding-block: clamp(56px, 6vw, 96px) 0;
+}
+
+/* ---- Top row ---------------------------------------------- */
+/* Brand + newsletter on the left, the four link columns filling
+   the rest of the width, exactly as in the reference frame. */
+
+.ft__top {
+  display: grid;
+  grid-template-columns: minmax(240px, .9fr) minmax(0, 1.7fr);
+  gap: clamp(40px, 5vw, 96px);
+  align-items: start;
+}
+
+/* ---- Brand block ------------------------------------------ */
+
+.ft__brand {
+  max-width: 420px;
+}
+
+.ft__logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--accent);
+}
+
+.ft__mark {
+  width: 26px;
+  height: 26px;
+  flex: 0 0 26px;
+}
+
+.ft__name {
+  font-size: var(--fs-lg);
+  font-weight: 600;
+  letter-spacing: -.022em;
+  color: var(--ink);
+}
+
+.ft__blurb {
+  margin-top: 22px;
+  max-width: 34ch;
+  font-size: var(--fs-sm);
+  line-height: 1.65;
+  color: var(--body);
+}
+
+/* ---- Newsletter ------------------------------------------- */
+/* One rounded field with the filled pill sitting inside its right
+   end. The pill is the standard .btn--primary, shrunk through the
+   --btn-pad hook so it clears the field's inset. */
+
+.ft__news {
+  margin-top: 24px;
+  max-width: 400px;
+}
+
+.ft__form {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px;
+  padding-inline-start: 0;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--r-pill);
+  box-shadow: var(--sh-xs);
+  transition:
+    border-color var(--d-sm) var(--e-out),
+    box-shadow var(--d-sm) var(--e-out);
+}
+
+/* The ring belongs to the whole field, not the bare input. */
+.ft__form:has(.ft__input:focus-visible) {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-ring);
+}
+
+.ft__form[data-invalid="true"] {
+  border-color: var(--c-emergency);
+}
+
+.ft__input {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: 12px 2px 12px 20px;
+  border: 0;
+  background: none;
+  font-size: var(--fs-sm);
+  color: var(--ink);
+}
+
+.ft__input::placeholder { color: var(--meta); }
+
+/* Suppressed here only because .ft__form takes the focus ring on
+   its behalf — the affordance moves, it does not disappear. */
+.ft__input:focus-visible { outline: none; }
+
+.ft__submit {
+  --btn-pad: 5px 5px 5px 18px;
+  flex: 0 0 auto;
+  gap: 10px;
+  font-size: var(--fs-sm);
+}
+
+.ft__submit .btn__arrow {
+  width: 28px;
+  height: 28px;
+  flex-basis: 28px;
+}
+
+.ft__submit .btn__arrow svg { width: 13px; height: 13px; }
+
+/* Live region. Empty it generates no line box, so it costs no
+   space until it has something to say. */
+.ft__status {
+  font-size: var(--fs-micro);
+  line-height: 1.5;
+}
+
+.ft__status:not(:empty) { margin-top: 12px; }
+
+/* No --danger token exists, so the error tone is mixed down from
+   the emergency pastel until it reads on a near-white ground. */
+.ft__status[data-state="invalid"] {
+  color: color-mix(in srgb, var(--c-emergency) 55%, var(--ink));
+}
+
+.ft__status[data-state="sent"] { color: var(--accent-deep); }
+
+/* ---- Social tiles ----------------------------------------- */
+
+.ft__social {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 28px;
+}
+
+.ft__social-link {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-xs);
+  background: var(--card);
+  color: var(--accent);
+  box-shadow: var(--sh-xs);
+  transition:
+    transform var(--d-xs) var(--e-out),
+    background-color var(--d-sm) var(--e-out),
+    border-color var(--d-sm) var(--e-out),
+    color var(--d-sm) var(--e-out);
+}
+
+.ft__social-link svg { width: 15px; height: 15px; }
+
+.ft__social-link:hover {
+  transform: translateY(-2px);
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--ground-2);
+}
+
+/* ---- Link columns ----------------------------------------- */
+
+.ft__cols {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(24px, 2.6vw, 40px);
+}
+
+.ft__col-title {
+  font-size: var(--fs-base);
+  font-weight: 600;
+  color: var(--ink);
+  letter-spacing: -.01em;
+}
+
+.ft__links {
+  display: grid;
+  gap: 13px;
+  margin-top: 20px;
+}
+
+.ft__link {
+  display: inline-block;
+  font-size: var(--fs-sm);
+  color: var(--body);
+  transition: color var(--d-xs) var(--e-out);
+}
+
+.ft__link:hover { color: var(--ink); }
+
+/* ---- Rule + legal line ------------------------------------ */
+
+.ft__base { margin-top: clamp(48px, 5.5vw, 88px); }
+
+.ft__legal {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 24px;
+  padding-top: 18px;
+  font-size: var(--fs-micro);
+  color: var(--meta);
+}
+
+/* ---- Ghost wordmark --------------------------------------- */
+/* Fades from pale blue at the cap line to nothing before the
+   baseline, then runs past the bottom of the plate. .plate has
+   overflow:clip, so the plate's own rounded corner does the
+   cropping — nothing here needs its own mask. */
+
+.ft__ghost {
+  margin-top: clamp(20px, 3vw, 44px);
+}
+
+.ft__wordmark {
+  display: block;
+  font-size: clamp(5rem, 17vw, 15rem);
+  font-weight: 700;
+  letter-spacing: -.05em;
+  line-height: 1;
+  white-space: nowrap;
+  user-select: none;
+  color: var(--ghost);
+  /* Hides the last third of the em box below the plate edge. */
+  margin-bottom: -.28em;
+}
+
+@supports (background-clip: text) or (-webkit-background-clip: text) {
+  .ft__wordmark {
+    background: var(--grad-ghost);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+  }
+}
+
+/* ---- Responsive ------------------------------------------- */
+
+@media (max-width: 1040px) {
+  .ft__top {
+    grid-template-columns: minmax(0, 1fr);
+    gap: clamp(44px, 6vw, 64px);
+  }
+}
+
+@media (max-width: 720px) {
+  .ft__cols {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 32px 20px;
+  }
+}
+
+@media (max-width: 460px) {
+  .ft__brand { max-width: none; }
+  .ft__news { max-width: none; }
+  .ft__legal { justify-content: flex-start; }
+}

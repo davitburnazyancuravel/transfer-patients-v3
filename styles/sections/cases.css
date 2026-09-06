@@ -1,0 +1,366 @@
+/* ============================================================
+   Cases — the testimonial block.
+
+   One of only two tinted bands on the page, so everything inside
+   it stays light: white cards, a white pager bar, one accent
+   underline and one very pale quote glyph. No slabs.
+
+   Layout is a photo card of ~420px beside a story card that sits
+   on top of two ghost copies of itself. The ghosts live inside the
+   stack's own right padding, so the deck never overflows the wrap
+   and never opens a horizontal scrollbar.
+
+   Everything here is prefixed .cases.
+   ============================================================ */
+
+.cases {
+  /* How far each card in the deck peeks past the one in front. */
+  --peek: 10px;
+}
+
+/* ---- Head ------------------------------------------------- */
+
+.cases__head {
+  max-width: 720px;
+  gap: 18px;
+}
+
+/* .line-rise clips to the line box, which would shave the tails off
+   descenders at --lh-tight. Pad the moving span, not the mask. */
+.cases__title .line-rise > span { padding-bottom: .08em; }
+
+/* ---- Tabs ------------------------------------------------- */
+/* A max-content strip centred in a scroller: it centres while the
+   four labels fit and scrolls sideways once they do not, without
+   the unreachable-overflow trap that justify-content:center sets. */
+
+.cases__tabsWrap { margin-top: clamp(28px, 3.4vw, 44px); }
+
+.cases__scroll {
+  overflow-x: auto;
+  scrollbar-width: none;
+  /* Room for the focus ring: overflow-x clips on both axes, and a
+     3px-offset outline on the first or last tab would be shaved. */
+  padding: 6px;
+}
+.cases__scroll::-webkit-scrollbar { display: none; }
+
+/* No max-width: capping the strip at the scroller's width would stop
+   it overflowing, and an overflow is exactly what makes it scroll. */
+.cases__strip {
+  position: relative;
+  width: max-content;
+  margin-inline: auto;
+}
+
+/* The rail the underline runs along — a hint of the accent, not a
+   border, so the strip still reads as type rather than as a table. */
+.cases__strip::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  height: 1px;
+  background: color-mix(in srgb, var(--accent) 20%, transparent);
+}
+
+.cases__tabs {
+  display: flex;
+  gap: clamp(4px, 1.6vw, 26px);
+  padding-bottom: 12px;
+}
+
+.cases__tab {
+  padding: 8px 10px;
+  font-size: var(--fs-base);
+  font-weight: 500;
+  line-height: var(--lh-snug);
+  color: var(--meta);
+  white-space: nowrap;
+  transition: color var(--d-sm) var(--e-out);
+}
+
+.cases__tab:hover { color: var(--ink-2); }
+.cases__tab[aria-selected="true"] { color: var(--ink); }
+
+/* Width and offset are written by the component after measuring the
+   live tab; both fall back to nothing before that first pass. */
+.cases__ink {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 2px;
+  width: var(--ink-w, 0px);
+  border-radius: var(--r-pill);
+  background: var(--accent);
+  transform: translateX(var(--ink-x, 0px));
+}
+
+.cases__strip[data-ready="true"] .cases__ink {
+  transition:
+    transform var(--d-sm) var(--e-out),
+    width var(--d-sm) var(--e-out);
+}
+
+/* ---- Body grid -------------------------------------------- */
+
+.cases__body {
+  display: grid;
+  grid-template-columns: minmax(0, 420px) minmax(0, 1fr);
+  gap: clamp(22px, 3vw, 46px);
+  align-items: stretch;
+  margin-top: clamp(30px, 3.6vw, 50px);
+}
+
+/* ---- Photo card ------------------------------------------- */
+/* The photograph takes whatever height the story column settles at;
+   the pager bar is a row of the same card, not an overlay. */
+
+.cases__photo {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  min-width: 0;
+  border-radius: var(--r-xl);
+  overflow: hidden;
+}
+
+.cases__frame {
+  position: relative;
+  min-height: clamp(300px, 40vw, 460px);
+  /* What the eye sees for the moment before the photo decodes. */
+  background: var(--card-tint);
+}
+
+/* All four shots are stacked and cross-fade, so switching case never
+   flashes an empty frame while the next file loads. */
+.cases__shot {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity var(--d-md) var(--e-out);
+}
+
+.cases__shot[data-on="true"] { opacity: 1; }
+
+.cases__img {
+  object-fit: cover;
+  /* Sits faces above the centre line, clear of the pager bar. */
+  object-position: 50% 40%;
+}
+
+.cases__pager {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  background: var(--card);
+  border-top: 1px solid var(--line-soft);
+}
+
+.cases__count {
+  justify-self: center;
+  font-size: var(--fs-base);
+}
+
+/* ---- Story column ----------------------------------------- */
+/* Every panel shares one grid cell. The three that are not live keep
+   their height but leave the accessibility tree via visibility, so
+   the column height — and the photo card beside it — holds steady. */
+
+.cases__story {
+  display: grid;
+  min-width: 0;
+}
+
+.cases__panel {
+  grid-area: 1 / 1;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 0;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(8px);
+  /* Out quickly, in slowly and a beat later: the two stories overlap
+     for a moment during the swap, and a symmetrical crossfade would
+     leave one paragraph legible through the other. */
+  transition:
+    opacity var(--d-sm) var(--e-out),
+    transform var(--d-sm) var(--e-out),
+    visibility 0s linear var(--d-sm);
+}
+
+.cases__panel[data-on="true"] {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  /* The delay also cancels the hold that keeps the outgoing panel
+     visible while it fades — the incoming one is visible at once. */
+  transition:
+    opacity var(--d-md) var(--e-out) var(--d-xs),
+    transform var(--d-md) var(--e-out) var(--d-xs),
+    visibility 0s;
+}
+
+/* ---- The deck --------------------------------------------- */
+
+.cases__stack {
+  position: relative;
+  isolation: isolate;
+  /* Takes the height the photo card sets, and hands it to the card, so
+     the two columns finish on the same line. */
+  display: flex;
+  flex: 1 1 auto;
+  /* The ghosts peek into this padding rather than out of the column. */
+  padding-right: calc(var(--peek) * 2 + 2px);
+}
+
+.cases__ghost {
+  position: absolute;
+  top: 18px;
+  bottom: 18px;
+  left: 48px;
+  right: calc(var(--peek) + 2px);
+  border-radius: var(--r-2xl);
+  background: var(--card);
+  border: 1px solid var(--line);
+  box-shadow: var(--sh-xs);
+  opacity: .7;
+}
+
+.cases__ghost--b {
+  top: 34px;
+  bottom: 34px;
+  right: 2px;
+  opacity: .4;
+}
+
+/* ---- Story card ------------------------------------------- */
+
+.cases__card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(14px, 1.5vw, 20px);
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: clamp(24px, 2.8vw, 40px);
+  border-radius: var(--r-2xl);
+  overflow: hidden;
+}
+
+/* The quote glyph is absolutely positioned, so the copy has to be
+   lifted over it rather than the other way round. */
+.cases__card > *:not(.cases__quote) {
+  position: relative;
+  z-index: 1;
+}
+
+.cases__mark {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.cases__markBar {
+  width: 28px;
+  height: 5px;
+  border-radius: var(--r-pill);
+  background: var(--c);
+}
+
+.cases__markDot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--c);
+  opacity: .4;
+}
+
+.cases__caseTitle {
+  line-height: var(--lh-snug);
+  text-wrap: balance;
+}
+.cases__caseTitle span { display: block; }
+
+.cases__copy {
+  color: var(--body);
+  max-width: 54ch;
+}
+
+.cases__work {
+  margin-top: 2px;
+  padding-top: clamp(14px, 1.6vw, 20px);
+  border-top: 1px solid var(--line-soft);
+}
+
+.cases__label {
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.cases__did { margin-top: 14px; }
+.cases__did li { align-items: flex-start; }
+/* The tick is optically centred on the first line of a wrapped item. */
+.cases__did .tick { margin-top: 3px; }
+
+/* Decorative quotation mark. Drawn from CSS so no user-visible string
+   lives outside lib/content.ts, and hidden from AT at the element. */
+.cases__quote {
+  position: absolute;
+  right: clamp(12px, 2vw, 26px);
+  bottom: -.36em;
+  z-index: 0;
+  /* No type token runs this large, so it is scaled off the biggest
+     one there is rather than pinned to a pixel size of its own. */
+  font-size: calc(var(--fs-stat) * 2.6);
+  font-weight: 700;
+  line-height: 1;
+  color: color-mix(in srgb, var(--c) 32%, transparent);
+  pointer-events: none;
+  user-select: none;
+}
+
+.cases__quote::before { content: "\201D"; }
+
+.cases__caption {
+  padding-inline: 4px;
+  text-wrap: pretty;
+}
+
+/* ---- Responsive ------------------------------------------- */
+
+@media (max-width: 900px) {
+  .cases__body {
+    grid-template-columns: minmax(0, 1fr);
+    gap: clamp(20px, 4vw, 32px);
+  }
+
+  /* Photo above the story, held to a portrait width under the
+     centred head rather than stretched across the whole column. */
+  .cases__photo {
+    width: min(460px, 100%);
+    margin-inline: auto;
+  }
+
+  .cases__frame { min-height: clamp(280px, 60vw, 420px); }
+}
+
+@media (max-width: 560px) {
+  .cases { --peek: 6px; }
+
+  .cases__tab {
+    padding-inline: 8px;
+    font-size: var(--fs-sm);
+  }
+
+  .cases__ghost { left: 30px; }
+}
+
+@media (max-width: 400px) {
+  .cases__card { padding: 22px 18px; }
+  .cases__pager { padding: 10px; }
+  .cases__quote { font-size: calc(var(--fs-stat) * 2.2); }
+}

@@ -1,0 +1,79 @@
+/* ============================================================
+   Ticker
+   A divider, not a section: one full-bleed line of very large,
+   very light words drifting past. Built on .marquee /
+   .marquee__track from base.css — this file only supplies the
+   type, the tone and the fade at each end.
+   ============================================================ */
+
+.tk {
+  position: relative;
+  /* Barely any air: the strip separates two sections, it is not
+     one itself. */
+  padding-block: clamp(18px, 2.2vw, 34px);
+  background: var(--ground-2);
+}
+
+.tk__marquee {
+  /* A slow drift — roughly a full pass every three quarters of a
+     minute, so it never competes with the sections either side. */
+  --mq-dur: 42s;
+
+  /* Dissolve both ends into the white ground so the words never
+     collide with the plate's rounded edge. Mask stops are alpha,
+     not palette. */
+  --tk-fade: clamp(40px, 9vw, 160px);
+  -webkit-mask-image: linear-gradient(
+    90deg,
+    transparent 0,
+    black var(--tk-fade),
+    black calc(100% - var(--tk-fade)),
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    90deg,
+    transparent 0,
+    black var(--tk-fade),
+    black calc(100% - var(--tk-fade)),
+    transparent 100%
+  );
+}
+
+.tk__track {
+  --tk-gap: clamp(20px, 2.5vw, 46px);
+  gap: var(--tk-gap);
+  /* Carries the gap across the seam where the duplicate track
+     picks the line back up. */
+  padding-inline-end: var(--tk-gap);
+}
+
+.tk__item {
+  display: flex;
+  align-items: center;
+  gap: var(--tk-gap);
+  /* No token lands on the ~2.6rem the reference uses, so scale the
+     heading step rather than invent a size. */
+  font-size: calc(var(--fs-h2) * 0.8);
+  font-weight: 500;
+  line-height: var(--lh-tight);
+  letter-spacing: 0.012em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* Ghost-toned: present, but clearly a texture behind the page. */
+.tk__word { color: var(--ghost); }
+
+.tk__word--accent { color: var(--accent); }
+
+.tk__slash {
+  font-weight: 400;
+  /* Paler again than the words — it is spacing you can see. */
+  color: color-mix(in srgb, var(--ghost) 46%, var(--ground-2));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* base.css already stops the loop; stated again here so the
+     strip cannot start moving if this file is reused elsewhere. */
+  .tk .marquee__track { animation: none; }
+}

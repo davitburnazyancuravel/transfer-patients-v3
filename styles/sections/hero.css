@@ -1,0 +1,279 @@
+/* ============================================================
+   Hero — full-bleed photograph, copy bottom-left, glass figure
+   bottom-right, and a hairline marquee flush underneath.
+
+   The only dark on this page is the photograph and its scrims;
+   everything structural stays on the plate's own ground.
+   ============================================================ */
+
+.hero {
+  /* The photo's rounded bottom corners cut back to the plate ground. */
+  background: var(--ground);
+}
+
+/* ---- The photographic frame ------------------------------- */
+
+.hero__frame {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  /* min-height, not height: on narrow screens the stacked copy and
+     glass card are allowed to push the frame taller rather than spill. */
+  min-height: clamp(620px, 88vh, 880px);
+  /* Top corners belong to the plate; the bottom two are ours. */
+  border-radius: 0 0 var(--r-2xl) var(--r-2xl);
+  overflow: clip;
+  isolation: isolate;
+}
+
+.hero__photo {
+  object-fit: cover;
+  /* Sits the subject just above centre so the copy sits on quieter pixels. */
+  object-position: 50% 42%;
+  z-index: 0;
+}
+
+/* House left-to-right wash: dense behind the copy, clear on the right
+   so the photograph itself still carries the frame. */
+.hero__wash {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: var(--grad-photo);
+}
+
+/* Vertical scrim: darkens under the floating header and along the
+   bottom edge, which is what keeps the hero legible once the grid
+   stacks and the copy runs full width. */
+.hero__scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--ink) 34%, transparent) 0%,
+    transparent 26%,
+    transparent 48%,
+    color-mix(in srgb, var(--ink) 52%, transparent) 100%
+  );
+}
+
+.hero__inner {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  /* The figure card must NOT be an `auto` track: its chip row has a
+     max-content width of ~680px unwrapped, which would size the track to
+     that and starve the headline. Pin it and let the chips wrap. */
+  grid-template-columns: minmax(0, 1fr) min(370px, 34%);
+  align-items: end;
+  gap: clamp(28px, 4vw, 56px);
+  /* Clears the overlaying header if the frame ever grows past its min. */
+  padding-block: calc(var(--header-h) + 24px) clamp(38px, 5.4vh, 68px);
+}
+
+/* ---- Copy column ------------------------------------------ */
+
+.hero__copy {
+  max-width: 46rem;
+}
+
+/* Badge -------------------------------------------------------
+   A translucent pill: mark, figure, then the label behind a hairline. */
+
+.hero__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 5px 15px 5px 5px;
+  border-radius: var(--r-pill);
+  background: var(--glass);
+  border: 1px solid var(--glass-line);
+  backdrop-filter: blur(14px) saturate(1.3);
+  -webkit-backdrop-filter: blur(14px) saturate(1.3);
+  color: var(--on-photo);
+  font-size: var(--fs-micro);
+  line-height: 1;
+}
+
+.hero__badge-mark {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  flex: 0 0 26px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--on-photo) 20%, transparent);
+}
+.hero__badge-mark svg { width: 13px; height: 13px; }
+
+.hero__badge-value { font-weight: 600; letter-spacing: .01em; }
+
+.hero__badge-label {
+  padding-left: 9px;
+  border-left: 1px solid var(--glass-line);
+  color: var(--on-photo-soft);
+}
+
+/* Headline ----------------------------------------------------
+   .line-rise clips each line to its own box, so a tight leading would
+   shave the descenders. The padding buys them room and the negative
+   margin gives it straight back to the rhythm. */
+
+.hero__title {
+  margin-top: clamp(18px, 2.4vw, 28px);
+  font-size: var(--fs-h1);
+  font-weight: 500;
+  line-height: var(--lh-tight);
+  letter-spacing: -.03em;
+  color: var(--on-photo);
+}
+
+.hero__line {
+  padding-bottom: .14em;
+  margin-bottom: -.14em;
+}
+
+.hero__lede {
+  margin-top: clamp(16px, 1.8vw, 22px);
+  color: var(--on-photo-soft);
+  max-width: 58ch;
+}
+
+.hero__actions {
+  margin-top: clamp(24px, 2.8vw, 34px);
+}
+
+/* ---- Glass figure card ------------------------------------ */
+
+.hero__glass {
+  width: min(370px, 100%);
+  justify-self: end;
+  display: grid;
+  gap: clamp(16px, 1.8vw, 22px);
+  padding: clamp(18px, 1.9vw, 24px);
+  border-radius: var(--r-xl);
+  background: var(--glass);
+  border: 1px solid var(--glass-line);
+  backdrop-filter: blur(20px) saturate(1.4);
+  -webkit-backdrop-filter: blur(20px) saturate(1.4);
+  box-shadow: var(--sh-lg);
+  color: var(--on-photo);
+}
+
+/* Without backdrop-filter a 16% white film is far too thin to read
+   white text on, so the fallback pays for itself in opacity. */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .hero__badge { background: color-mix(in srgb, var(--ink) 46%, transparent); }
+  .hero__glass { background: color-mix(in srgb, var(--ink) 52%, transparent); }
+}
+
+/* Stacked, not side by side: at 370px the card cannot give the caption
+   enough measure beside a 51px figure without it breaking into three
+   cramped lines. Under the number it gets the card's full width. */
+.hero__figure {
+  display: grid;
+  justify-items: start;
+  gap: 6px;
+}
+
+.hero__figure-num {
+  font-size: var(--fs-stat);
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -.03em;
+  color: var(--on-photo);
+  flex: 0 0 auto;
+}
+
+.hero__figure-cap {
+  max-width: 30ch;
+  font-size: var(--fs-micro);
+  line-height: 1.38;
+  color: var(--on-photo-soft);
+  text-wrap: pretty;
+}
+
+.hero__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* .chip is built for white cards; over photography it needs to become
+   glass without losing its shape. */
+.hero__chip {
+  padding: 6px 12px;
+  background: color-mix(in srgb, var(--on-photo) 16%, transparent);
+  border-color: var(--glass-line);
+  color: var(--on-photo);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+/* ---- Marquee strip ---------------------------------------- */
+
+.hero__strip {
+  background: var(--accent-wash);
+  border-bottom: 1px solid color-mix(in srgb, var(--accent) 16%, transparent);
+}
+
+.hero__mq {
+  --mq-dur: 42s;
+  padding-block: 11px;
+}
+
+.hero__mq-item {
+  display: inline-flex;
+  align-items: center;
+  gap: clamp(18px, 2.6vw, 34px);
+  padding-inline-end: clamp(18px, 2.6vw, 34px);
+  font-size: var(--fs-micro);
+  font-weight: 600;
+  letter-spacing: var(--tr-eyebrow);
+  text-transform: uppercase;
+  color: var(--accent-deep);
+  white-space: nowrap;
+}
+
+.hero__mq-dot {
+  width: 5px;
+  height: 5px;
+  flex: 0 0 5px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--accent) 60%, transparent);
+}
+
+/* ---- Responsive ------------------------------------------- */
+
+@media (max-width: 1000px) {
+  .hero__inner {
+    grid-template-columns: minmax(0, 1fr);
+    align-items: start;
+  }
+  .hero__glass {
+    justify-self: start;
+    width: min(420px, 100%);
+  }
+  /* Stacked, the copy no longer has a card beside it to balance. */
+  .hero__lede { max-width: 52ch; }
+}
+
+@media (max-width: 720px) {
+  .hero__frame {
+    /* The plate loses its radius here, so the photo squares off with it. */
+    border-radius: 0;
+    min-height: clamp(560px, 84vh, 760px);
+  }
+  .hero__photo { object-position: 56% 38%; }
+  .hero__inner { padding-block: calc(var(--header-h) + 16px) clamp(30px, 4vh, 44px); }
+  .hero__title { letter-spacing: -.024em; }
+  .hero__glass { width: 100%; }
+}
+
+@media (max-width: 420px) {
+  .hero__badge-label {
+    /* Keeps the pill on one line at 360px. */
+    padding-left: 8px;
+  }
+}

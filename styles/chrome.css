@@ -1,0 +1,366 @@
+/* ============================================================
+   Curavel v3 — site chrome (header only)
+
+   The bar has one job and two faces. Over the hero photograph it
+   is nothing but white text and a glass outline; once the hero has
+   scrolled away it settles into a near-white bar with a hairline
+   under it. Both faces are driven by four custom properties set on
+   .hdr, so every child cross-fades in step rather than jumping.
+   ============================================================ */
+
+.hdr {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-header);
+  height: var(--header-h);
+
+  /* The bar floats over the first section instead of pushing it
+     down, so it gives back exactly the space it occupies. Sections
+     below the hero simply scroll underneath it. */
+  margin-bottom: calc(var(--header-h) * -1);
+
+  /* ---- State vocabulary --------------------------------- */
+  /* Default face: over photography. */
+  --hdr-fg: var(--on-photo);
+  --hdr-fg-soft: var(--on-photo-soft);
+  --hdr-line: var(--glass-line);
+  --hdr-bar: var(--accent-hi);
+}
+
+/* Scrolled past the hero — and while the mobile sheet is down, so
+   the brand and the close control read against the white sheet. */
+.hdr[data-solid="true"],
+.hdr[data-open="true"] {
+  --hdr-fg: var(--ink);
+  --hdr-fg-soft: var(--body);
+  --hdr-line: var(--line);
+  --hdr-bar: var(--accent);
+}
+
+/* The opaque face lives on a pseudo-element so it can fade in over
+   the transparent one instead of the bar repainting in one frame. */
+.hdr::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  background: color-mix(in srgb, var(--ground-2) 88%, transparent);
+  box-shadow: inset 0 -1px 0 var(--line);
+  backdrop-filter: saturate(1.5) blur(16px);
+  -webkit-backdrop-filter: saturate(1.5) blur(16px);
+  transition: opacity var(--d-md) var(--e-out);
+}
+
+.hdr[data-solid="true"]::before,
+.hdr[data-open="true"]::before { opacity: 1; }
+
+/* Over photography the brand focus ring needs to be legible on a
+   dark frame; accent blue is not. */
+.hdr:not([data-solid="true"]):not([data-open="true"]) :focus-visible {
+  outline-color: var(--on-photo);
+}
+
+/* ---- Row -------------------------------------------------- */
+
+.hdr__inner {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 16px;
+  height: 100%;
+}
+
+/* ---- Brand ------------------------------------------------ */
+
+.hdr__brand {
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  gap: 11px;
+  color: var(--hdr-fg);
+  transition: color var(--d-md) var(--e-out);
+}
+
+.hdr__mark {
+  width: 26px;
+  height: 26px;
+  flex: 0 0 26px;
+}
+
+.hdr__brandText { display: grid; gap: 2px; }
+
+.hdr__name {
+  font-size: var(--fs-lg);
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -.022em;
+}
+
+.hdr__tag {
+  font-size: var(--fs-eyebrow);
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: var(--tr-eyebrow);
+  text-transform: uppercase;
+  color: var(--hdr-fg-soft);
+  transition: color var(--d-md) var(--e-out);
+}
+
+/* ---- Centre nav ------------------------------------------- */
+
+.hdr__nav { justify-self: center; }
+
+.hdr__list {
+  /* Positioned so the sliding bar can measure against this box. */
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: clamp(16px, 2.3vw, 36px);
+}
+
+/* Links arrive one after another on load, as in the reference. */
+.hdr__item {
+  animation: hdr-in var(--d-md) var(--e-out) both;
+  animation-delay: calc(var(--i, 0) * 70ms);
+}
+
+@keyframes hdr-in {
+  from { opacity: 0; transform: translateY(-9px); }
+}
+
+.hdr__link {
+  display: block;
+  padding: 10px 2px 12px;
+  font-size: var(--fs-base);
+  font-weight: 500;
+  white-space: nowrap;
+  color: var(--hdr-fg-soft);
+  transition: color var(--d-sm) var(--e-out);
+}
+
+.hdr__link:hover,
+.hdr__link[aria-current] { color: var(--hdr-fg); }
+
+/* One bar for the whole row: it slides and stretches between items
+   rather than each link owning an underline that flicks on. */
+.hdr__bar {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 2px;
+  width: var(--w, 0px);
+  border-radius: var(--r-pill);
+  background: var(--hdr-bar);
+  transform: translateX(var(--x, 0px));
+  opacity: var(--on, 0);
+  pointer-events: none;
+  transition:
+    transform var(--d-md) var(--e-spring),
+    width var(--d-md) var(--e-spring),
+    opacity var(--d-sm) var(--e-out),
+    background-color var(--d-md) var(--e-out);
+}
+
+/* ---- Call to action --------------------------------------- */
+/* Settles onto the .btn--ghost recipe; over the hero it thins out
+   to the glass outline the reference uses. */
+
+.hdr__cta {
+  justify-self: end;
+  --btn-pad: 11px 22px;
+  transition:
+    transform var(--d-xs) var(--e-out),
+    color var(--d-md) var(--e-out),
+    background-color var(--d-md) var(--e-out),
+    border-color var(--d-md) var(--e-out),
+    box-shadow var(--d-md) var(--e-out);
+}
+
+.hdr:not([data-solid="true"]) .hdr__cta {
+  background: var(--glass);
+  color: var(--on-photo);
+  border-color: var(--glass-line);
+  box-shadow: none;
+}
+
+.hdr:not([data-solid="true"]) .hdr__cta:hover {
+  background: color-mix(in srgb, var(--on-photo) 26%, transparent);
+  border-color: var(--on-photo);
+}
+
+/* ---- Menu control ----------------------------------------- */
+
+.hdr__burger {
+  justify-self: end;
+  display: none;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--hdr-line);
+  color: var(--hdr-fg);
+  transition:
+    color var(--d-md) var(--e-out),
+    border-color var(--d-md) var(--e-out),
+    background-color var(--d-sm) var(--e-out);
+}
+
+.hdr__burger:hover { background: var(--accent-wash); }
+.hdr:not([data-solid="true"]):not([data-open="true"]) .hdr__burger:hover {
+  background: var(--glass);
+}
+
+.hdr__bars {
+  position: relative;
+  display: block;
+  width: 18px;
+  height: 11px;
+}
+
+.hdr__bars span {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 1.5px;
+  border-radius: var(--r-pill);
+  background: currentColor;
+  transition: transform var(--d-sm) var(--e-spring);
+}
+
+.hdr__bars span:first-child { top: 0; }
+.hdr__bars span:last-child { bottom: 0; }
+
+.hdr[data-open="true"] .hdr__bars span:first-child {
+  transform: translateY(4.75px) rotate(45deg);
+}
+.hdr[data-open="true"] .hdr__bars span:last-child {
+  transform: translateY(-4.75px) rotate(-45deg);
+}
+
+/* ---- Mobile sheet ----------------------------------------- */
+/* Drops from the top of the plate and fills the viewport. It sits
+   behind .hdr__inner so the brand and the close control stay put
+   while it travels. */
+
+.hdr__sheet {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100vh;
+  height: 100dvh;
+  display: grid;
+  grid-template-rows: 1fr auto;
+  gap: 24px;
+  padding:
+    calc(var(--header-h) + 18px)
+    var(--gutter)
+    calc(28px + env(safe-area-inset-bottom, 0px));
+  background: var(--ground-2);
+  transform: translateY(-101%);
+  visibility: hidden;
+  transition:
+    transform var(--d-md) var(--e-in-out),
+    visibility 0s linear var(--d-md);
+}
+
+.hdr[data-open="true"] .hdr__sheet {
+  transform: none;
+  visibility: visible;
+  transition: transform var(--d-md) var(--e-out), visibility 0s;
+}
+
+.hdr__sheetNav {
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.hdr__sheetList { display: grid; align-content: start; }
+
+/* Each row settles in after the sheet itself has landed. */
+.hdr__sheetItem {
+  opacity: 0;
+  transform: translateY(12px);
+  transition:
+    opacity var(--d-md) var(--e-out),
+    transform var(--d-md) var(--e-out);
+}
+
+.hdr[data-open="true"] .hdr__sheetItem {
+  opacity: 1;
+  transform: none;
+  transition-delay: calc(var(--d-sm) + var(--i, 0) * 55ms);
+}
+
+.hdr__sheetLink {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 0;
+  font-size: var(--fs-h3);
+  font-weight: 500;
+  color: var(--ink);
+  border-bottom: 1px solid var(--line-soft);
+  transition: color var(--d-sm) var(--e-out);
+}
+
+.hdr__sheetLink[aria-current] { color: var(--accent); }
+
+.hdr__sheetArrow {
+  display: grid;
+  place-items: center;
+  width: 16px;
+  height: 16px;
+  flex: 0 0 16px;
+  color: var(--ghost);
+  transition: transform var(--d-sm) var(--e-spring), color var(--d-sm) var(--e-out);
+}
+
+.hdr__sheetLink:hover .hdr__sheetArrow,
+.hdr__sheetLink[aria-current] .hdr__sheetArrow {
+  color: var(--accent);
+  transform: translateX(4px);
+}
+
+.hdr__sheetCta {
+  --btn-pad: 10px 10px 10px 26px;
+  justify-content: space-between;
+  width: 100%;
+}
+
+/* ---- Breakpoints ------------------------------------------ */
+
+@media (max-width: 899px) {
+  .hdr__inner { grid-template-columns: 1fr auto; }
+  .hdr__nav,
+  .hdr__cta { display: none; }
+  .hdr__burger { display: grid; }
+}
+
+@media (min-width: 900px) {
+  /* Never in the accessibility tree on desktop. */
+  .hdr__sheet { display: none; }
+}
+
+@media (max-width: 420px) {
+  .hdr__tag { display: none; }
+  .hdr__name { font-size: var(--fs-lede); }
+}
+
+/* ---- Reduced motion --------------------------------------- */
+/* Tokens already collapse durations; these kill the displacement
+   so nothing slides or drops for readers who asked it not to. */
+
+@media (prefers-reduced-motion: reduce) {
+  .hdr__item { animation: none; }
+  .hdr__sheet { transition: none; }
+  .hdr__sheetItem {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}

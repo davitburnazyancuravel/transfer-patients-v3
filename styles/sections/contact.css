@@ -1,0 +1,314 @@
+/* ============================================================
+   Contact — the closing banner.
+
+   A single photograph in a rounded card, inset from the page
+   edge by the wrap gutter, with the whole call to action stacked
+   down its centre. Nothing here is a dark panel: the darkness is
+   the photograph plus one scrim, and it stops at the card's
+   rounded edge.
+
+   Everything is prefixed .cta.
+   ============================================================ */
+
+.cta {
+  background: var(--ground);
+  /* The footer opens with its own generous top padding, so a full
+     --sec-y underneath here would double the gap. */
+  padding-block: var(--sec-y) clamp(44px, 4.6vw, 76px);
+}
+
+/* ---- The photographic card -------------------------------- */
+
+.cta__frame {
+  position: relative;
+  display: grid;
+  place-items: center;
+  /* min-height, not height: if the copy or the stacked field ever
+     runs taller than the banner, the card grows rather than spills. */
+  min-height: clamp(480px, 44vw, 560px);
+  padding: clamp(52px, 5.4vw, 76px) clamp(20px, 4vw, 64px);
+  border-radius: var(--r-2xl);
+  overflow: clip;
+  isolation: isolate;
+}
+
+.cta__photo {
+  object-fit: cover;
+  /* Holds the horizon just below the heading rather than through it. */
+  object-position: 50% 54%;
+  z-index: 0;
+}
+
+/* One scrim rather than the hero's pair. The copy is centred here,
+   so the darkening is centred too: densest through the middle and
+   easing off towards the corners, which leaves the photograph
+   reading as a photograph at its edges instead of as a slab. */
+.cta__scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background:
+    radial-gradient(
+      78% 94% at 50% 50%,
+      color-mix(in srgb, var(--ink) 42%, transparent) 0%,
+      color-mix(in srgb, var(--ink) 30%, transparent) 52%,
+      transparent 100%
+    ),
+    color-mix(in srgb, var(--ink) 34%, transparent);
+}
+
+/* ---- Centred stack ---------------------------------------- */
+/* gap stays at 0 and each child sets its own margin-top, so the
+   rhythm between badge, heading, lede and field is tuned rather
+   than uniform. */
+
+.cta__inner {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  justify-items: center;
+  text-align: center;
+  width: 100%;
+  min-width: 0;
+  max-width: 760px;
+}
+
+/* ---- Badge ------------------------------------------------- */
+
+.cta__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 6px 16px;
+  border-radius: var(--r-pill);
+  background: var(--glass);
+  border: 1px solid var(--glass-line);
+  backdrop-filter: blur(14px) saturate(1.3);
+  -webkit-backdrop-filter: blur(14px) saturate(1.3);
+  color: var(--on-photo);
+  font-size: var(--fs-micro);
+  line-height: 1;
+}
+
+.cta__badge-value { font-weight: 600; letter-spacing: .01em; }
+
+.cta__badge-label {
+  padding-left: 9px;
+  border-left: 1px solid var(--glass-line);
+  color: var(--on-photo-soft);
+}
+
+/* Without backdrop-filter a 16% white film is far too thin to read
+   white text on, so the fallback pays for itself in opacity. */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .cta__badge { background: color-mix(in srgb, var(--ink) 46%, transparent); }
+}
+
+/* ---- Heading ----------------------------------------------- */
+/* .line-rise clips each line to its own box, which at --lh-tight
+   would shave the descenders. The padding buys them room and the
+   negative margin hands it straight back to the rhythm. */
+
+.cta__title {
+  margin-top: clamp(18px, 2.2vw, 26px);
+  font-size: var(--fs-display);
+  font-weight: 500;
+  line-height: var(--lh-tight);
+  letter-spacing: -.03em;
+  color: var(--on-photo);
+  text-wrap: balance;
+}
+
+.cta__line {
+  padding-bottom: .14em;
+  margin-bottom: -.14em;
+}
+
+/* The brighter step of the accent, not --accent itself: over a scrim
+   this dark the base blue lands near 2.3:1, while --accent-hi clears
+   the 3:1 large-text threshold with room to spare. Same hue, same
+   token family — just the step that survives the photograph. */
+.cta__line--accent { color: var(--accent-hi); }
+
+/* ---- Lede -------------------------------------------------- */
+
+.cta__lede {
+  margin-top: clamp(14px, 1.6vw, 20px);
+  max-width: 52ch;
+  color: var(--on-photo-soft);
+}
+
+/* ---- Form / done ------------------------------------------- */
+
+.cta__act {
+  display: grid;
+  justify-items: center;
+  width: 100%;
+  min-width: 0;
+  margin-top: clamp(26px, 3vw, 36px);
+}
+
+/* One white pill with the filled accent button sitting inside its
+   right end. The button is the standard .btn--primary, shrunk
+   through the --btn-pad hook so it clears the field's inset. */
+.cta__form {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: min(520px, 100%);
+  padding: 6px;
+  padding-inline-start: 0;
+  background: var(--card);
+  /* Transparent by default so the invalid state has an edge to
+     colour without the field shifting by a pixel. */
+  border: 1px solid transparent;
+  border-radius: var(--r-pill);
+  box-shadow: var(--sh-md);
+  transition:
+    border-color var(--d-sm) var(--e-out),
+    box-shadow var(--d-sm) var(--e-out);
+}
+
+/* The ring belongs to the whole field, not the bare input. */
+.cta__form:has(.cta__input:focus-visible) {
+  border-color: var(--accent);
+  box-shadow: var(--sh-md), 0 0 0 3px var(--accent-ring);
+}
+
+.cta__form[data-invalid="true"] {
+  border-color: var(--c-emergency);
+}
+
+.cta__input {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: 14px 2px 14px 24px;
+  border: 0;
+  background: none;
+  font-size: var(--fs-base);
+  color: var(--ink);
+}
+
+.cta__input::placeholder { color: var(--meta); }
+
+/* Suppressed here only because .cta__form takes the focus ring on
+   its behalf — the affordance moves, it does not disappear. */
+.cta__input:focus-visible { outline: none; }
+
+.cta__submit {
+  --btn-pad: 6px 6px 6px 20px;
+  flex: 0 0 auto;
+  gap: 10px;
+  font-size: var(--fs-sm);
+}
+
+.cta__submit .btn__arrow {
+  width: 30px;
+  height: 30px;
+  flex-basis: 30px;
+}
+
+.cta__submit .btn__arrow svg { width: 13px; height: 13px; }
+
+/* Live region. Empty it generates no line box, so it costs no space
+   until it has something to say. No --danger token exists, so the
+   error tone is mixed up from the emergency pastel until it reads
+   against the scrim rather than against white. */
+.cta__status {
+  font-size: var(--fs-micro);
+  line-height: 1.5;
+  color: color-mix(in srgb, var(--c-emergency) 82%, var(--on-photo));
+}
+
+.cta__status:not(:empty) { margin-top: 12px; }
+
+/* ---- Consent line ------------------------------------------ */
+
+.cta__consent {
+  margin-top: 16px;
+  font-size: var(--fs-micro);
+  line-height: 1.6;
+  color: color-mix(in srgb, var(--on-photo) 58%, transparent);
+}
+
+.cta__consentLink {
+  color: var(--on-photo-soft);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+  transition: color var(--d-xs) var(--e-out);
+}
+
+.cta__consentLink:hover { color: var(--on-photo); }
+
+/* ---- Confirmation ------------------------------------------ */
+
+.cta__done {
+  display: grid;
+  justify-items: center;
+  gap: 16px;
+  max-width: 46ch;
+}
+
+.cta__doneText {
+  font-size: var(--fs-lede);
+  line-height: 1.55;
+  color: var(--on-photo);
+  text-wrap: pretty;
+}
+
+/* It only takes focus programmatically, so give the ring room to
+   sit clear of the text it is announcing. */
+.cta__doneText:focus-visible { outline-offset: 6px; }
+
+.cta__again {
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  color: var(--on-photo-soft);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  text-decoration-thickness: 1px;
+  transition: color var(--d-xs) var(--e-out);
+}
+
+.cta__again:hover { color: var(--on-photo); }
+
+/* ---- Responsive -------------------------------------------- */
+
+@media (max-width: 760px) {
+  .cta__lede { max-width: 46ch; }
+}
+
+@media (max-width: 560px) {
+  .cta__frame {
+    /* A --r-2xl corner on a card this narrow eats the copy's margins. */
+    border-radius: var(--r-xl);
+    min-height: clamp(440px, 96vw, 520px);
+    padding-inline: clamp(18px, 5vw, 28px);
+  }
+
+  /* A pill cannot hold a readable placeholder and the button side by
+     side at this width, so the field opens out into a small card. */
+  .cta__form {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 6px;
+    border-radius: var(--r-lg);
+  }
+
+  .cta__input { padding: 12px 16px; }
+
+  .cta__submit {
+    --btn-pad: 10px 10px 10px 20px;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 400px) {
+  .cta__badge {
+    /* Keeps the pill on one line at 360px. */
+    padding-inline: 13px;
+    gap: 8px;
+  }
+  .cta__badge-label { padding-left: 8px; }
+}

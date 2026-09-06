@@ -1,0 +1,239 @@
+/* ============================================================
+   FAQ — the partner accordion.
+
+   White ground, two columns: a sticky title block on the left and
+   a stack of pale --card-tint bars on the right. Nothing here is
+   a slab — the bars are the only fill, and they sit apart from
+   each other so the column reads as a list, not a panel.
+
+   Everything is prefixed .faq.
+   ============================================================ */
+
+.faq {
+  /* One padding pair drives the whole bar: the question row and the
+     answer beneath it stay on the same optical margins. */
+  --faq-pad-x: clamp(20px, 2.2vw, 30px);
+  --faq-pad-y: clamp(18px, 1.9vw, 24px);
+  --faq-plate: 40px;
+}
+
+/* ---- Layout ----------------------------------------------- */
+
+.faq__grid {
+  display: grid;
+  /* ~38 / 62. The left column keeps a floor so the heading never
+     drops to two words a line before the layout stacks. */
+  grid-template-columns: minmax(260px, 38fr) minmax(0, 62fr);
+  gap: clamp(36px, 5vw, 88px);
+  align-items: start;
+}
+
+/* align-self is what lets the column move at all: a stretched grid
+   item is already as tall as the row and has nowhere to stick to. */
+.faq__aside { align-self: start; }
+
+.faq__head { gap: 20px; }
+
+/* .line-rise clips to the line box, which would shave the tail off
+   the "q" in the first line. Pad the moving span, not the mask. */
+.faq__title .line-rise > span { padding-bottom: .08em; }
+
+.faq__cta { margin-top: clamp(4px, 1vw, 12px); }
+
+/* ---- The stack -------------------------------------------- */
+
+.faq__list {
+  display: grid;
+  gap: 12px;
+}
+
+.faq__item {
+  background: var(--card-tint);
+  border-radius: var(--r-lg);
+  /* This element is also the .rv, and a second `transition` on it
+     would replace the reveal's own — including its stagger delay.
+     So the tint joins that list rather than displacing it. */
+  transition:
+    opacity var(--d-md) var(--e-out) calc(var(--i, 0) * 70ms),
+    transform var(--d-md) var(--e-out) calc(var(--i, 0) * 70ms),
+    background-color var(--d-sm) var(--e-out);
+}
+
+.faq__item:hover {
+  background: color-mix(in srgb, var(--card-tint-2) 62%, var(--card-tint));
+}
+
+/* Placed after :hover on purpose — an open row keeps its deeper
+   tint whether or not the pointer is over it. */
+.faq__item[data-open="true"] { background: var(--card-tint-2); }
+
+/* ---- Question row ----------------------------------------- */
+
+.faq__qHead {
+  /* The heading is structural only; the bar's type scale lives on
+     the button's own span. */
+  font: inherit;
+  letter-spacing: inherit;
+  color: inherit;
+}
+
+.faq__btn {
+  display: flex;
+  align-items: center;
+  gap: clamp(16px, 2vw, 28px);
+  width: 100%;
+  padding: var(--faq-pad-y) var(--faq-pad-x);
+  text-align: left;
+  border-radius: var(--r-lg);
+}
+
+/* The default ring sits 3px outside the element, which would break
+   the bar's silhouette. Pull it inside instead — same weight, same
+   colour, still unmistakable. */
+.faq__btn:focus-visible {
+  outline-offset: -3px;
+  border-radius: var(--r-lg);
+}
+
+.faq__q {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: var(--fs-lede);
+  font-weight: 500;
+  line-height: 1.4;
+  letter-spacing: -.012em;
+  color: var(--ink);
+  text-wrap: pretty;
+}
+
+/* ---- The plus plate --------------------------------------- */
+
+.faq__plus {
+  display: grid;
+  place-items: center;
+  flex: 0 0 var(--faq-plate);
+  width: var(--faq-plate);
+  height: var(--faq-plate);
+  border-radius: 50%;
+  background: var(--accent-wash);
+  color: var(--accent);
+  transition:
+    background-color var(--d-sm) var(--e-out),
+    color var(--d-sm) var(--e-out),
+    box-shadow var(--d-sm) var(--e-out);
+}
+
+/* Rotating the glyph rather than the plate keeps the circle still
+   and lets the cross land square. */
+.faq__plus svg {
+  width: 16px;
+  height: 16px;
+  transition: transform var(--d-sm) var(--e-spring);
+}
+
+.faq__btn:hover .faq__plus {
+  background: color-mix(in srgb, var(--accent) 18%, var(--accent-wash));
+}
+
+.faq__item[data-open="true"] .faq__plus {
+  background: var(--grad-cta);
+  color: var(--ground-2);
+  box-shadow: var(--sh-cta);
+}
+
+.faq__item[data-open="true"] .faq__plus svg { transform: rotate(45deg); }
+
+/* ---- Answer panel ------------------------------------------ */
+/* 0fr → 1fr is the whole mechanism: the row measures its own
+   content, so nothing has to guess a max-height and no answer can
+   ever be clipped by one. */
+
+.faq__panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows var(--d-md) var(--e-soft);
+}
+
+.faq__item[data-open="true"] .faq__panel { grid-template-rows: 1fr; }
+
+.faq__panelInner {
+  overflow: hidden;
+  /* Grid items floor at min-content without this, which would leave
+     one line of the answer showing when the row is shut. */
+  min-height: 0;
+  /* Takes a closed panel out of the accessibility tree and the tab
+     order, but only once the collapse has finished — hence the delay
+     on the way out and none on the way in. */
+  visibility: hidden;
+  transition: visibility 0s linear var(--d-md);
+}
+
+.faq__item[data-open="true"] .faq__panelInner {
+  visibility: visible;
+  transition-delay: 0s;
+}
+
+.faq__a {
+  padding: 0 var(--faq-pad-x) var(--faq-pad-y);
+  max-width: 58ch;
+  color: var(--body);
+  text-wrap: pretty;
+  opacity: 0;
+  transform: translateY(-6px);
+  transition:
+    opacity var(--d-sm) var(--e-out),
+    transform var(--d-sm) var(--e-out);
+}
+
+.faq__item[data-open="true"] .faq__a {
+  opacity: 1;
+  transform: none;
+  transition-delay: calc(var(--d-md) * .3);
+}
+
+/* ---- Sticky ------------------------------------------------ */
+/* Only where the column has somewhere to travel to: a short window
+   would pin the heading over its own accordion. */
+
+@media (min-width: 881px) and (min-height: 660px) {
+  .faq__aside {
+    position: sticky;
+    top: calc(var(--header-h) + clamp(24px, 4vh, 52px));
+  }
+}
+
+/* ---- Responsive -------------------------------------------- */
+
+@media (max-width: 880px) {
+  .faq__grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: clamp(32px, 5vw, 48px);
+  }
+}
+
+@media (max-width: 480px) {
+  .faq {
+    --faq-plate: 34px;
+  }
+
+  .faq__btn { gap: 14px; }
+
+  .faq__q { font-size: var(--fs-base); }
+
+  .faq__plus svg { width: 14px; height: 14px; }
+}
+
+/* Reduced motion: the tokens already flatten the durations, but the
+   visibility hand-off is keyed to one of them, so state it plainly. */
+@media (prefers-reduced-motion: reduce) {
+  .faq__item,
+  .faq__panel,
+  .faq__panelInner,
+  .faq__plus,
+  .faq__plus svg,
+  .faq__a { transition: none; }
+
+  .faq__a { opacity: 1; transform: none; }
+
+  .faq__item:not([data-open="true"]) .faq__panelInner { visibility: hidden; }
+}
