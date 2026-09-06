@@ -1,4 +1,4 @@
-/* The Curavel mark — a droplet with a cross cut out of it.
+/* The General Medical mark — a droplet with a cross cut out of it.
    Inherits currentColor so it works on white and over photography. */
 
 export function BrandMark({ className }: { className?: string }) {

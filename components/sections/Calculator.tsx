@@ -400,7 +400,7 @@ const GAUGE_ARC = "M14 100A86 86 0 0 1 186 100";
 
    CALC_CREW names the people; the manifest holds the photography.
    The pairing is fixed here so a given clinician always wears the
-   same face, and so swapping the stock for real Curavel portraits
+   same face, and so swapping the stock for real General Medical portraits
    stays a one-file change in lib/media.ts.
    ------------------------------------------------------------ */
 const CREW_PORTRAIT: Record<CrewKey, number> = {

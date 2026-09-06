@@ -1,8 +1,8 @@
 {
-  "name": "curavel-site",
+  "name": "general-medical-site",
   "version": "3.0.0",
   "private": true,
-  "description": "Curavel — Patient Transfer Services",
+  "description": "General Medical — Patient Transfer Services",
   "scripts": {
     "dev": "next dev",
     "build": "next build",

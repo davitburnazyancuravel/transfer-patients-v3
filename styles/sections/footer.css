@@ -1,5 +1,5 @@
 /* ============================================================
-   Curavel v3 — footer
+   General Medical v3 — footer
 
    White-first, like the rest of the page: the block sits on the
    plate's own --ground so the top edge reads as a change of
@@ -236,7 +236,11 @@
 
 .ft__wordmark {
   display: block;
-  font-size: clamp(5rem, 17vw, 15rem);
+  /* Tuned so the wordmark spans the plate without overflowing. The
+     name is fifteen characters, so it needs roughly half the size a
+     short one would take to cover the same measure — re-tune this if
+     the brand name changes length again. */
+  font-size: clamp(2.1rem, 7.9vw, 7rem);
   font-weight: 700;
   letter-spacing: -.05em;
   line-height: 1;

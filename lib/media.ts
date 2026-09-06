@@ -2,7 +2,7 @@
    Photography manifest.
 
    Every photo on the site is referenced through this file, so
-   swapping the placeholder stock for real Curavel photography is
+   swapping the placeholder stock for real General Medical photography is
    a one-file change: replace each `src` (and keep the `alt`).
 
    Placeholders are Unsplash-hosted and are allow-listed in

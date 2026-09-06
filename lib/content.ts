@@ -1,5 +1,5 @@
 /* ============================================================
-   Curavel — content.
+   General Medical — content.
    Every string on the site lives here. Sections import from this
    module and never inline their own copy, so the client can
    re-word the site without touching layout or behaviour.
@@ -15,11 +15,11 @@ export type Accent =
 /* ---- Site chrome ----------------------------------------- */
 
 export const SITE = {
-  name: "Curavel",
+  name: "General Medical",
   tagline: "Patient Transfer",
-  title: "Curavel — Patient Transfer Services",
+  title: "General Medical — Patient Transfer Services",
   description:
-    "Curavel is a contracted medical transport partner. Emergency, inter-facility, neonatal and long-distance patient transfers under continuous clinical supervision — 24/7, SLA-backed, across the UK and Europe.",
+    "General Medical is a contracted medical transport partner. Emergency, inter-facility, neonatal and long-distance patient transfers under continuous clinical supervision — 24/7, SLA-backed, across the UK and Europe.",
   ogDescription:
     "Not every transfer is urgent. Every one is critical. Contracted medical transport with ICU-grade care in motion.",
 } as const;
@@ -40,7 +40,7 @@ export const HERO = {
   badge: { value: "84,000+", label: "Patients moved" },
   title: ["Not every transfer", "is urgent, every one", "is critical"],
   lede:
-    "Curavel is a contracted medical transport partner — moving patients between hospitals, clinics and homes with intensive-care-grade supervision that never pauses at the door.",
+    "General Medical is a contracted medical transport partner — moving patients between hospitals, clinics and homes with intensive-care-grade supervision that never pauses at the door.",
   cta: { label: "Request a transfer", href: "#contact" },
   glass: {
     stat: "99.2",
@@ -55,7 +55,7 @@ export const HERO = {
       "24/7 dispatch",
     ],
   },
-  marquee: "Curavel — Safe. Swift. Supervised.",
+  marquee: "General Medical — Safe. Swift. Supervised.",
 } as const;
 
 /* ---- Statement (scroll-revealed) -------------------------- */
@@ -63,17 +63,17 @@ export const HERO = {
 export const STATEMENT = {
   /* Words in `lead` stay ink from the start; the rest reveals. */
   text:
-    "At Curavel we do not treat a transfer as a gap between two hospitals — we treat it as part of the care",
-  emphasis: ["Curavel", "part of the care"],
+    "At General Medical we do not treat a transfer as a gap between two hospitals — we treat it as part of the care",
+  emphasis: ["General Medical", "part of the care"],
 } as const;
 
 /* ---- About / bento ---------------------------------------- */
 
 export const ABOUT = {
   eyebrow: "About us",
-  title: ["Unveil precision.", "Discover the Curavel", "difference."],
+  title: ["Unveil precision.", "Discover the General Medical", "difference."],
   lede:
-    "At Curavel we do not treat a transfer as a gap between two hospitals — we treat it as part of the care. Our contracted crews move patients under continuous clinical supervision, in vehicles built and equipped as mobile intensive-care units, with a single named clinical lead from bedside to bedside.",
+    "At General Medical we do not treat a transfer as a gap between two hospitals — we treat it as part of the care. Our contracted crews move patients under continuous clinical supervision, in vehicles built and equipped as mobile intensive-care units, with a single named clinical lead from bedside to bedside.",
   cells: [
     {
       key: "supervision",
@@ -182,18 +182,18 @@ export const CREW = {
     { role: "Critical Care Paramedic", name: "Daniel Whitfield", line: "Leads advanced-life-support road transfers and ventilated inter-facility moves.", meta: "On the road since 2014" },
     { role: "Flight Nurse", name: "Amara Osei", line: "Fixed-wing and rotary repatriation, bedside to bedside.", meta: "Flying since 2016" },
     { role: "Intensive Care Physician", name: "Dr Sofia Marchetti", line: "Escorts the most unstable patients we move.", meta: "Practising since 2009" },
-    { role: "Neonatal Transport Nurse", name: "Priya Raman", line: "Transport incubators and neonatal ventilation.", meta: "With Curavel since 2015" },
-    { role: "Dispatch Lead", name: "Marcus Feld", line: "Runs the 24/7 desk and every contract response window.", meta: "With Curavel since 2012" },
-    { role: "Bariatric Specialist", name: "Tomas Nowak", line: "Powered loading and safe manual handling.", meta: "With Curavel since 2017" },
-    { role: "Emergency Medical Technician", name: "Chloe Bennett", line: "Discharge and step-down transfers across London.", meta: "With Curavel since 2019" },
+    { role: "Neonatal Transport Nurse", name: "Priya Raman", line: "Transport incubators and neonatal ventilation.", meta: "With General Medical since 2015" },
+    { role: "Dispatch Lead", name: "Marcus Feld", line: "Runs the 24/7 desk and every contract response window.", meta: "With General Medical since 2012" },
+    { role: "Bariatric Specialist", name: "Tomas Nowak", line: "Powered loading and safe manual handling.", meta: "With General Medical since 2017" },
+    { role: "Emergency Medical Technician", name: "Chloe Bennett", line: "Discharge and step-down transfers across London.", meta: "With General Medical since 2019" },
     { role: "Retrieval Consultant", name: "Dr Idris Kamara", line: "Pre-hospital retrieval and major trauma transfer.", meta: "Practising since 2007" },
-    { role: "Paediatric Nurse", name: "Hannah Vogel", line: "Paediatric critical care in transit.", meta: "With Curavel since 2018" },
+    { role: "Paediatric Nurse", name: "Hannah Vogel", line: "Paediatric critical care in transit.", meta: "With General Medical since 2018" },
     { role: "Anaesthetic Practitioner", name: "Ravi Deshmukh", line: "Airway management on long transfers.", meta: "Practising since 2011" },
-    { role: "Mental Health Escort", name: "Naomi Clarke", line: "Section 136 and voluntary psychiatric transport.", meta: "With Curavel since 2016" },
-    { role: "Ambulance Technician", name: "Luca Ferretti", line: "Non-emergency and renal pathway transport.", meta: "With Curavel since 2020" },
+    { role: "Mental Health Escort", name: "Naomi Clarke", line: "Section 136 and voluntary psychiatric transport.", meta: "With General Medical since 2016" },
+    { role: "Ambulance Technician", name: "Luca Ferretti", line: "Non-emergency and renal pathway transport.", meta: "With General Medical since 2020" },
     { role: "Infection Control Lead", name: "Dr Mei Tanaka", line: "Isolation transfers and decontamination protocol.", meta: "Practising since 2010" },
-    { role: "Fleet Clinical Engineer", name: "Owen Pritchard", line: "Keeps every monitor, pump and ventilator in service.", meta: "With Curavel since 2013" },
-    { role: "Repatriation Coordinator", name: "Sara Lindqvist", line: "Cross-border logistics, escorts and customs.", meta: "With Curavel since 2015" },
+    { role: "Fleet Clinical Engineer", name: "Owen Pritchard", line: "Keeps every monitor, pump and ventilator in service.", meta: "With General Medical since 2013" },
+    { role: "Repatriation Coordinator", name: "Sara Lindqvist", line: "Cross-border logistics, escorts and customs.", meta: "With General Medical since 2015" },
     { role: "Advanced Paramedic", name: "Grace Adeyemi", line: "Community response and urgent care pathways.", meta: "On the road since 2017" },
     { role: "Neonatal Consultant", name: "Dr Peter Halloran", line: "Clinical oversight for every neonatal move.", meta: "Practising since 2005" },
   ],
@@ -280,7 +280,7 @@ export const PARTNERS = {
   eyebrow: "For partners",
   title: ["Contracted care,", "wired into your systems"],
   lede:
-    "Curavel plugs into the way your trust already works — one agreement, one invoice, and dispatch you can trigger from your own software.",
+    "General Medical plugs into the way your trust already works — one agreement, one invoice, and dispatch you can trigger from your own software.",
   facts: [
     { label: "Response window", value: "Contracted per tier" },
     { label: "Coverage", value: "UK-wide, Europe on request" },
@@ -455,6 +455,6 @@ export const FOOTER = {
       ],
     },
   ],
-  legal: "Curavel — Safe. Swift. Supervised.",
-  wordmark: "Curavel",
+  legal: "General Medical — Safe. Swift. Supervised.",
+  wordmark: "General Medical",
 } as const;
