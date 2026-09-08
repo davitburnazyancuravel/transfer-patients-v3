@@ -291,11 +291,12 @@ h1, h2, h3, h4 { margin: 0; font-weight: 600; color: var(--ink); line-height: va
    subtree, so cards, ticks and icons colour themselves. */
 
 [data-accent] { --c: var(--accent); --c-wash: var(--accent-wash); }
-[data-accent="emergency"] { --c: var(--c-emergency); --c-wash: var(--c-emergency-w); }
-[data-accent="interfac"]  { --c: var(--c-interfac);  --c-wash: var(--c-interfac-w); }
-[data-accent="longdist"]  { --c: var(--c-longdist);  --c-wash: var(--c-longdist-w); }
-[data-accent="neonatal"]  { --c: var(--c-neonatal);  --c-wash: var(--c-neonatal-w); }
-[data-accent="bariatric"] { --c: var(--c-bariatric); --c-wash: var(--c-bariatric-w); }
+[data-accent="azure"]  { --c: var(--c-azure);  --c-wash: var(--c-azure-w); }
+[data-accent="violet"] { --c: var(--c-violet); --c-wash: var(--c-violet-w); }
+[data-accent="mint"]   { --c: var(--c-mint);   --c-wash: var(--c-mint-w); }
+[data-accent="amber"]  { --c: var(--c-amber);  --c-wash: var(--c-amber-w); }
+[data-accent="gold"]   { --c: var(--c-gold);   --c-wash: var(--c-gold-w); }
+[data-accent="coral"]  { --c: var(--c-coral);  --c-wash: var(--c-coral-w); }
 
 /* Tick used in every bullet list */
 .tick {

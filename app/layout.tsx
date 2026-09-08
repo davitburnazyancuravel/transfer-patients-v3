@@ -8,6 +8,7 @@ import "@/styles/sections/hero.css";
 import "@/styles/sections/statement.css";
 import "@/styles/sections/about.css";
 import "@/styles/sections/services.css";
+import "@/styles/sections/service.css";
 import "@/styles/sections/cases.css";
 import "@/styles/sections/crew.css";
 import "@/styles/sections/ticker.css";
@@ -52,7 +53,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en-GB" className={onest.variable}>
+    <html lang="en-US" className={onest.variable}>
       <body>
         <a className="skip" href="#main">
           Skip to content

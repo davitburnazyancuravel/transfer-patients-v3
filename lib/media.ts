@@ -25,12 +25,27 @@ const u = (id: string, w = 1600, q = 78): string =>
 export const PHOTOS = {
   hero: { src: u("photo-1780570349003-f698592df551", 1900), alt: "A crew member wheeling a loaded stretcher across open tarmac towards the open rear doors of an ambulance." },
 
+  /* One panel per service line, keyed by SERVICES.items[].key.
+
+     These six are local vector placeholders (public/services/*.svg),
+     not photography: four of the service lines — home health, PT, OT
+     and home modifications — had no stock shot that honestly showed
+     them, and a half-photo/half-vector set looked like a mistake
+     rather than a decision. They are drawn in each service's own
+     accent so the stepper still reads as one system.
+
+     Swap each `src` for the approved photography or final artwork
+     when it lands; nothing outside this file needs to change. Note
+     that Services.tsx and the service pages pass `unoptimized` for
+     these, because next/image will not run SVG through the optimizer
+     — drop that prop once these become raster images. */
   services: {
-    emergency:    { src: u("photo-1554734867-bf3c00a49371"), alt: "An ambulance moving at speed through a city street at dusk, its blue lights streaking across the frame." },
-    interfacility:{ src: u("photo-1517120026326-d87759a7b63b"), alt: "A nurse in scrubs pushing a wheeled patient transport unit along a bright hospital corridor." },
-    longdistance: { src: u("photo-1696243144290-792f1f48339e"), alt: "The cabin of an air ambulance, a stretcher secured on its rail loading system beside a patient monitor." },
-    neonatal:     { src: u("photo-1560306580-9e204fe45f3e"), alt: "A newborn resting calmly in an incubator, wrapped in a white blanket with monitoring leads attached." },
-    bariatric:    { src: u("photo-1782835431138-a8be539ae04b"), alt: "A made-up stretcher with pillow, blankets and restraint straps inside an ambulance, a folded transport chair behind it." },
+    nemt:         { src: "/services/nemt.svg", alt: "Line illustration of a wheelchair, drawn in blue on a pale blue field." },
+    ambulance:    { src: "/services/ambulance.svg", alt: "Line illustration of an ambulance in side view marked with a cross, drawn in violet on a pale violet field." },
+    homehealth:   { src: "/services/homehealth.svg", alt: "Line illustration of a house with a heartbeat trace inside it, drawn in green on a pale green field." },
+    physical:     { src: "/services/physical.svg", alt: "Line illustration of a flight of steps beside a rising handrail, drawn in orange on a pale orange field." },
+    occupational: { src: "/services/occupational.svg", alt: "Line illustration of a cup with a supporting hand curved beneath it, drawn in gold on a pale gold field." },
+    homemods:     { src: "/services/homemods.svg", alt: "Line illustration of a ramp with a handrail leading up to a doorway, drawn in coral on a pale coral field." },
   },
 
   cases: {

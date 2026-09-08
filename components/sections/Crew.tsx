@@ -23,15 +23,16 @@ import { PHOTOS } from "@/lib/media";
 
 type Person = (typeof CREW.people)[number];
 
-/* Five pastels against seventeen people. Cycling by roster index
+/* Six pastels against seventeen people. Cycling by roster index
    means neighbours never share a colour — including across the
    seam where a track meets its own duplicate. */
 const ACCENTS: readonly Accent[] = [
-  "emergency",
-  "interfac",
-  "longdist",
-  "neonatal",
-  "bariatric",
+  "azure",
+  "violet",
+  "mint",
+  "amber",
+  "gold",
+  "coral",
 ];
 
 /* Row A takes the first nine, row B the remaining eight. Each row

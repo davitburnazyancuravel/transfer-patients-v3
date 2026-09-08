@@ -1,0 +1,426 @@
+/* ============================================================
+   Service pages — /services/<slug>, and the index at /services.
+
+   Server-rendered throughout: no piece of this needs state, so
+   the only motion is the shared .rv reveal that SiteEffects
+   releases, and the FAQ opens with a native <details>.
+
+   Every block is a plain grid that collapses to one column at
+   900px. The accent comes from data-accent on the article root,
+   so each page tints itself from --c / --c-wash without a single
+   per-service rule below.
+   ============================================================ */
+
+.sp { --sp-gap: clamp(28px, 3vw, 52px); }
+
+/* ---- Masthead --------------------------------------------- */
+
+.sp__top {
+  padding-block: calc(var(--header-h) + clamp(28px, 4vw, 64px))
+                 clamp(48px, 6vw, 92px);
+  background: var(--grad-panel);
+}
+
+.sp__crumb {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: clamp(20px, 2.4vw, 34px);
+  padding: 7px 14px 7px 11px;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--line);
+  background: var(--card);
+  box-shadow: var(--sh-xs);
+  font-size: var(--fs-micro);
+  font-weight: 600;
+  color: var(--body);
+  transition: border-color var(--d-xs) var(--e-out),
+              box-shadow var(--d-xs) var(--e-out),
+              color var(--d-xs) var(--e-out);
+}
+
+.sp__crumb:hover { border-color: var(--line-strong); box-shadow: var(--sh-sm); color: var(--ink); }
+
+.sp__crumbArrow {
+  display: grid;
+  place-items: center;
+  width: 16px;
+  height: 16px;
+  color: var(--c);
+  transform: rotate(180deg);
+}
+
+.sp__crumbArrow svg { width: 13px; height: 13px; }
+
+.sp__head {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr);
+  gap: clamp(32px, 5vw, 76px);
+  align-items: center;
+}
+
+.sp__h1 {
+  margin: 14px 0 0;
+  font-size: var(--fs-h1);
+  font-weight: 300;
+  line-height: var(--lh-tight);
+  letter-spacing: -.02em;
+  color: var(--ink-muted);
+}
+
+.sp__h1 strong { font-weight: 600; color: var(--ink); }
+
+.sp__lede {
+  margin: clamp(18px, 2vw, 26px) 0 0;
+  max-width: 54ch;
+  font-size: var(--fs-lede);
+  line-height: var(--lh-body);
+  color: var(--body);
+}
+
+.sp__ticks { margin-top: clamp(22px, 2.4vw, 32px); }
+
+.sp__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: clamp(26px, 3vw, 38px);
+}
+
+/* ---- Masthead panel --------------------------------------- */
+
+.sp__frame {
+  position: relative;
+  width: 100%;
+  max-width: 440px;
+  margin-inline: auto;
+}
+
+.sp__plate {
+  position: absolute;
+  inset: 0;
+  transform: translate(-18px, 20px);
+  border-radius: var(--r-xl);
+  background: var(--c-wash);
+}
+
+.sp__shot {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  border-radius: var(--r-xl);
+  overflow: hidden;
+  background: var(--card-tint);
+  box-shadow: var(--sh-lg);
+}
+
+.sp__img { object-fit: cover; }
+
+.sp__chip {
+  position: absolute;
+  z-index: 2;
+  top: 18px;
+  right: 18px;
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 8px 15px;
+  border-radius: var(--r-pill);
+  background: var(--glass-strong);
+  border: 1px solid var(--glass-line);
+  backdrop-filter: blur(14px) saturate(1.3);
+  -webkit-backdrop-filter: blur(14px) saturate(1.3);
+  box-shadow: var(--sh-md);
+  font-size: var(--fs-micro);
+  font-weight: 600;
+  color: var(--ink);
+  white-space: nowrap;
+}
+
+.sp__chipDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--c);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--c) 26%, transparent);
+}
+
+/* ---- Included ---------------------------------------------- */
+
+.sp__cards {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--sp-gap);
+  margin-top: clamp(32px, 4vw, 56px);
+}
+
+.sp__card {
+  padding: clamp(22px, 2.4vw, 32px);
+  border-radius: var(--r-lg);
+  border: 1px solid var(--line);
+  background: var(--card);
+  box-shadow: var(--sh-card);
+}
+
+.sp__cardMark {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  margin-bottom: 16px;
+  border-radius: 50%;
+  background: var(--c-wash);
+  color: var(--ink);
+  font-size: var(--fs-micro);
+  font-weight: 700;
+}
+
+.sp__cardTitle {
+  margin: 0 0 10px;
+  font-size: var(--fs-lg);
+  font-weight: 600;
+  line-height: var(--lh-snug);
+  color: var(--ink);
+}
+
+.sp__cardCopy {
+  margin: 0;
+  font-size: var(--fs-base);
+  line-height: var(--lh-body);
+  color: var(--body);
+}
+
+/* ---- Who it's for, and how it works ------------------------ */
+
+.sp__split {
+  display: grid;
+  grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr);
+  gap: clamp(36px, 5vw, 84px);
+  align-items: start;
+}
+
+.sp__blockTitle {
+  margin: 0 0 clamp(18px, 2vw, 26px);
+  font-size: var(--fs-h3);
+  font-weight: 600;
+  line-height: var(--lh-snug);
+  color: var(--ink);
+}
+
+.sp__steps {
+  display: grid;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: sp-step;
+}
+
+.sp__step {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 18px;
+  padding-block: clamp(18px, 2vw, 26px);
+  border-top: 1px solid var(--line);
+}
+
+.sp__step:last-child { border-bottom: 1px solid var(--line); }
+
+.sp__stepNum {
+  font-size: var(--fs-micro);
+  font-weight: 700;
+  color: var(--c);
+  font-variant-numeric: tabular-nums;
+  padding-top: 3px;
+}
+
+.sp__stepTitle {
+  margin: 0 0 7px;
+  font-size: var(--fs-lg);
+  font-weight: 600;
+  line-height: var(--lh-snug);
+  color: var(--ink);
+}
+
+.sp__stepCopy {
+  margin: 0;
+  font-size: var(--fs-base);
+  line-height: var(--lh-body);
+  color: var(--body);
+}
+
+/* ---- FAQ ---------------------------------------------------- */
+
+.sp__faq {
+  display: grid;
+  gap: 12px;
+  margin-top: clamp(30px, 3.4vw, 46px);
+  max-width: 880px;
+}
+
+.sp__q {
+  border-radius: var(--r-md);
+  border: 1px solid var(--line);
+  background: var(--card);
+  box-shadow: var(--sh-xs);
+  overflow: hidden;
+}
+
+.sp__qHead {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: clamp(16px, 1.8vw, 22px) clamp(18px, 2vw, 26px);
+  cursor: pointer;
+  font-size: var(--fs-base);
+  font-weight: 600;
+  color: var(--ink);
+  list-style: none;
+}
+
+.sp__qHead::-webkit-details-marker { display: none; }
+
+.sp__qMark {
+  display: grid;
+  place-items: center;
+  flex: 0 0 26px;
+  width: 26px;
+  height: 26px;
+  margin-left: auto;
+  border-radius: 50%;
+  background: var(--c-wash);
+  color: var(--ink);
+  transition: transform var(--d-sm) var(--e-out);
+}
+
+.sp__qMark svg { width: 12px; height: 12px; }
+
+.sp__q[open] .sp__qMark { transform: rotate(45deg); }
+
+.sp__qBody {
+  margin: 0;
+  padding: 0 clamp(18px, 2vw, 26px) clamp(18px, 2vw, 24px);
+  font-size: var(--fs-base);
+  line-height: var(--lh-body);
+  color: var(--body);
+}
+
+/* ---- Service grid (index page, and "other services") -------- */
+
+.sp__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(18px, 2vw, 26px);
+  margin-top: clamp(32px, 4vw, 52px);
+}
+
+/* The tile is the link itself, so the row has to stretch to it. */
+.sp__grid > li { display: grid; }
+
+.sp__tile {
+  display: grid;
+  grid-template-rows: auto auto 1fr auto;
+  padding: clamp(20px, 2.2vw, 28px);
+  border-radius: var(--r-lg);
+  border: 1px solid var(--line);
+  background: var(--card);
+  box-shadow: var(--sh-card);
+  transition: transform var(--d-sm) var(--e-out),
+              box-shadow var(--d-sm) var(--e-out),
+              border-color var(--d-sm) var(--e-out);
+}
+
+.sp__tile:hover {
+  transform: translateY(-3px);
+  border-color: var(--line-strong);
+  box-shadow: var(--sh-md);
+}
+
+.sp__tileMark {
+  width: 30px;
+  height: 6px;
+  border-radius: var(--r-pill);
+  background: var(--c);
+  margin-bottom: 18px;
+}
+
+.sp__tileName {
+  margin: 0 0 10px;
+  font-size: var(--fs-lg);
+  font-weight: 600;
+  line-height: var(--lh-snug);
+  color: var(--ink);
+}
+
+.sp__tileCopy {
+  margin: 0 0 20px;
+  font-size: var(--fs-sm);
+  line-height: var(--lh-body);
+  color: var(--body);
+}
+
+.sp__tileMore {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  font-size: var(--fs-micro);
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.sp__tileArrow {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--c-wash);
+  transition: transform var(--d-xs) var(--e-out);
+}
+
+.sp__tileArrow svg { width: 12px; height: 12px; }
+.sp__tile:hover .sp__tileArrow { transform: translateX(3px); }
+
+/* ---- Closing band ------------------------------------------ */
+
+.sp__end {
+  margin-top: clamp(40px, 5vw, 72px);
+  display: grid;
+  justify-items: center;
+  gap: clamp(18px, 2vw, 26px);
+  padding: clamp(40px, 5vw, 72px) clamp(24px, 4vw, 56px);
+  border-radius: var(--r-2xl);
+  background: var(--c-wash);
+  text-align: center;
+}
+
+.sp__endTitle {
+  margin: 0;
+  max-width: 22ch;
+  font-size: var(--fs-h3);
+  font-weight: 600;
+  line-height: var(--lh-snug);
+  color: var(--ink);
+}
+
+/* ---- Narrow ------------------------------------------------- */
+
+@media (max-width: 1080px) {
+  .sp__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 900px) {
+  .sp__head,
+  .sp__split { grid-template-columns: minmax(0, 1fr); }
+
+  .sp__head { gap: clamp(30px, 6vw, 48px); }
+
+  .sp__cards,
+  .sp__grid { grid-template-columns: minmax(0, 1fr); }
+
+  /* Narrower than the column, so the offset plate behind it has
+     somewhere to sit instead of running under the page edge. */
+  .sp__frame { max-width: 300px; }
+  .sp__plate { transform: translate(-12px, 14px); }
+}

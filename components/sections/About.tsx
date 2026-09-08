@@ -1,7 +1,7 @@
 import type { ComponentType, CSSProperties } from "react";
 
 import { BrandMark } from "@/components/BrandMark";
-import { ArrowRight, Check, Plus, Users } from "@/components/ui/icons";
+import { ArrowRight, Calendar, Check, Plus, Users } from "@/components/ui/icons";
 import { ABOUT, CREW } from "@/lib/content";
 
 /* ============================================================
@@ -196,17 +196,17 @@ function RecordDiagram() {
 }
 
 const DIAGRAMS: Record<CellKey, ComponentType> = {
-  supervision: TraceDiagram,
-  vehicles: KitDiagram,
+  coordination: TraceDiagram,
+  athome: KitDiagram,
   lead: LeadDiagram,
   record: RecordDiagram,
 };
 
-/* The plate glyph reads as the promise: clinical, in motion,
-   staffed, signed off. */
+/* The plate glyph reads as the promise: scheduled, clinical,
+   staffed, reported. */
 const PLATE_ICONS: Record<CellKey, ComponentType> = {
-  supervision: Plus,
-  vehicles: ArrowRight,
+  coordination: Calendar,
+  athome: Plus,
   lead: Users,
   record: Check,
 };

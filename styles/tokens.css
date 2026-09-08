@@ -31,17 +31,22 @@
   --accent-ring:   rgba(81, 116, 246, .28);
 
   /* ---- Per-section pastels ------------------------------ */
-  --c-emergency:   #ff8a8a;
-  --c-interfac:    #6fa8f5;
-  --c-longdist:    #c9a8f0;
-  --c-neonatal:    #94dcc6;
-  --c-bariatric:   #f5b98a;
+  /* Named for the hue, not the service, so the service lines can
+     be renamed or reordered without touching the palette. Six
+     slots, one per service; base tone then its wash. */
+  --c-azure:       #6fa8f5;
+  --c-violet:      #c9a8f0;
+  --c-mint:        #94dcc6;
+  --c-amber:       #f5b98a;
+  --c-gold:        #e8ce7e;
+  --c-coral:       #ff8a8a;
 
-  --c-emergency-w: #ffeded;
-  --c-interfac-w:  #e8f1fe;
-  --c-longdist-w:  #f5edfd;
-  --c-neonatal-w:  #e6f8f2;
-  --c-bariatric-w: #fef2e8;
+  --c-azure-w:     #e8f1fe;
+  --c-violet-w:    #f5edfd;
+  --c-mint-w:      #e6f8f2;
+  --c-amber-w:     #fef2e8;
+  --c-gold-w:      #fdf7e4;
+  --c-coral-w:     #ffeded;
 
   /* ---- Lines & shadows ---------------------------------- */
   --line:          #e6e9f4;

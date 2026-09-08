@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
 import { BrandMark } from "@/components/BrandMark";
@@ -12,20 +13,21 @@ import { clamp, pad2 } from "@/lib/util";
 /* ============================================================
    Services — the numbered stepper.
 
-   Five services, one at a time. On a wide screen the stage pins
-   itself and the reader's own scroll walks the rail: the track
-   is five viewports tall, the hairline fills to the live step,
+   Six services, one at a time, each also a page of its own at
+   /services/<slug>. On a wide screen the stage pins itself and
+   the reader's own scroll walks the rail: the track is one
+   viewport per service, the hairline fills to the live step,
    and the photograph/copy pair crossfades underneath it. Nothing
    is animated frame-by-frame — JS only decides *which* of the
    five is live, and CSS transitions everything else.
 
    Below 900px, and whenever the reader has asked for less
-   motion, the mechanism is abandoned outright: the five become a
+   motion, the mechanism is abandoned outright: the six become a
    plain stacked list with every item on screen at once.
 
    That choice lives in `mode`, and it also governs honesty
-   towards assistive tech — four items may only be hidden from
-   the accessibility tree while they are genuinely invisible.
+   towards assistive tech — the off-screen items may only be
+   hidden from the accessibility tree while genuinely invisible.
    `mode` therefore starts at "list", so the server-rendered
    markup and a browser with JavaScript switched off both expose
    the whole set.
@@ -42,16 +44,6 @@ const REDUCED_MOTION = "(prefers-reduced-motion: reduce)";
 
 /* How many of an item's points the card over the photo repeats. */
 const FACT_COUNT = 2;
-
-/* ------------------------------------------------------------
-   Copy that lib/content.ts has no key for yet.
-
-   Every other visible string in this file comes from SERVICES.
-   This one is the stepper's per-item affordance; it belongs in
-   SERVICES alongside `cta` (as `how`, say) the moment that file
-   can be edited. Nothing else here should ever be inlined.
-   ------------------------------------------------------------ */
-const PENDING_COPY = { how: "See how it works" } as const;
 
 export function Services() {
   const [mode, setMode] = useState<Mode>("list");
@@ -235,6 +227,7 @@ export function Services() {
                         <div className="svc__frame">
                           <span className="svc__plate" aria-hidden="true" />
 
+                          {/* unoptimized: the panels are SVG — see lib/media.ts. */}
                           <div className="svc__shot">
                             <Image
                               className="svc__img"
@@ -242,6 +235,7 @@ export function Services() {
                               alt={photo.alt}
                               fill
                               sizes="(min-width: 1240px) 440px, (min-width: 900px) 38vw, (min-width: 560px) 460px, 88vw"
+                              unoptimized
                             />
 
                             <p className="svc__chip">
@@ -285,17 +279,17 @@ export function Services() {
                           ))}
                         </ul>
 
-                        <a
+                        <Link
                           className="btn btn--ghost svc__more"
-                          href={SERVICES.cta.href}
-                          aria-label={item.enquire}
+                          href={`/services/${item.slug}`}
+                          aria-label={`${SERVICES.how}: ${item.name}`}
                           tabIndex={gone ? -1 : undefined}
                         >
-                          {PENDING_COPY.how}
+                          {SERVICES.how}
                           <span className="btn__arrow" aria-hidden="true">
                             <ArrowRight />
                           </span>
-                        </a>
+                        </Link>
                       </div>
                     </article>
                   );

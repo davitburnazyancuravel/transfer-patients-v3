@@ -13,7 +13,7 @@ export const lerp = (a: number, b: number, t: number): number => a + (b - a) * t
 export const easeOutCubic = (t: number): number => 1 - Math.pow(1 - t, 3);
 
 export const money = (v: number): string =>
-  "£" + Math.round(v).toLocaleString("en-GB");
+  "$" + Math.round(v).toLocaleString("en-US");
 
 export const miles = (v: number): string => `${Math.round(v)} mi`;
 
@@ -33,7 +33,7 @@ export const formatStat = (v: number, format: StatFormat): string => {
     case "decimal1":
       return `${v.toFixed(1)}%`;
     case "thousands":
-      return `${Math.round(v).toLocaleString("en-GB")}+`;
+      return `${Math.round(v).toLocaleString("en-US")}+`;
     default:
       return String(Math.round(v));
   }

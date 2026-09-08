@@ -110,7 +110,7 @@ export function Hero() {
               <span
                 className="counter hero__figure-num"
                 data-count={HERO.glass.stat}
-                data-count-format="decimal1"
+                data-count-format={HERO.glass.format}
               >
                 {HERO.glass.stat}
                 {HERO.glass.unit}

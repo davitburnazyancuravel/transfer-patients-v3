@@ -5,57 +5,67 @@
    re-word the site without touching layout or behaviour.
    ============================================================ */
 
+import type { StatFormat } from "@/lib/util";
+
+/* One palette slot per service line. Named for the hue rather than
+   the service, so a service can be renamed or reordered without a
+   token rename following it through the stylesheets. */
 export type Accent =
-  | "emergency"
-  | "interfac"
-  | "longdist"
-  | "neonatal"
-  | "bariatric";
+  | "azure"
+  | "violet"
+  | "mint"
+  | "amber"
+  | "gold"
+  | "coral";
 
 /* ---- Site chrome ----------------------------------------- */
 
 export const SITE = {
   name: "General Medical",
-  tagline: "Patient Transfer",
-  title: "General Medical — Patient Transfer Services",
+  tagline: "Transportation & Home Care",
+  title: "General Medical — Non-Emergency Medical Transportation & Home Care",
   description:
-    "General Medical is a contracted medical transport partner. Emergency, inter-facility, neonatal and long-distance patient transfers under continuous clinical supervision — 24/7, SLA-backed, across the UK and Europe.",
+    "General Medical provides non-emergency medical transportation, non-emergency ambulance, home health, physical therapy, occupational therapy and medical home modifications — coordinated by one provider.",
   ogDescription:
-    "Not every transfer is urgent. Every one is critical. Contracted medical transport with ICU-grade care in motion.",
+    "Getting there, and getting better at home. Six coordinated services from one provider.",
 } as const;
 
 export const NAV = [
-  { label: "About Us", href: "#about" },
-  { label: "Services", href: "#services" },
-  { label: "Crew", href: "#crew" },
-  { label: "Calculator", href: "#calculator" },
-  { label: "Cases", href: "#cases" },
+  { label: "About Us", href: "/#about" },
+  { label: "Services", href: "/#services" },
+  { label: "Crew", href: "/#crew" },
+  { label: "Calculator", href: "/#calculator" },
+  { label: "Cases", href: "/#cases" },
 ] as const;
 
-export const NAV_CTA = { label: "Request a transfer", href: "#contact" } as const;
+export const NAV_CTA = { label: "Request service", href: "/#contact" } as const;
 
 /* ---- Hero ------------------------------------------------- */
 
 export const HERO = {
-  badge: { value: "84,000+", label: "Patients moved" },
-  title: ["Not every transfer", "is urgent, every one", "is critical"],
+  badge: { value: "6", label: "Coordinated services" },
+  title: ["Getting there,", "and getting better", "at home"],
   lede:
-    "General Medical is a contracted medical transport partner — moving patients between hospitals, clinics and homes with intensive-care-grade supervision that never pauses at the door.",
-  cta: { label: "Request a transfer", href: "#contact" },
+    "General Medical moves patients to the care they need and delivers care in the place they live — transportation, home health and therapy arranged through one provider, on one schedule.",
+  cta: { label: "Request service", href: "/#contact" },
   glass: {
-    stat: "99.2",
-    unit: "%",
-    caption: "On-time arrival across every contracted service tier",
+    stat: "6",
+    unit: "",
+    /* The counter rewrites the whole figure as it animates, so the
+       format — not `unit` — owns the final string. "plain" keeps
+       this a bare count; `unit` is only the pre-animation snapshot. */
+    format: "plain" as StatFormat,
+    caption: "Service lines, coordinated by a single care team",
     chips: [
-      "Emergency response",
-      "Inter-facility",
-      "Neonatal",
-      "Repatriation",
-      "Bariatric",
-      "24/7 dispatch",
+      "Wheelchair & gurney",
+      "Non-emergency ambulance",
+      "Home health",
+      "Physical therapy",
+      "Occupational therapy",
+      "Home modifications",
     ],
   },
-  marquee: "General Medical — Safe. Swift. Supervised.",
+  marquee: "General Medical — Scheduled. Staffed. Supervised.",
 } as const;
 
 /* ---- Statement (scroll-revealed) -------------------------- */
@@ -63,8 +73,8 @@ export const HERO = {
 export const STATEMENT = {
   /* Words in `lead` stay ink from the start; the rest reveals. */
   text:
-    "At General Medical we do not treat a transfer as a gap between two hospitals — we treat it as part of the care",
-  emphasis: ["General Medical", "part of the care"],
+    "At General Medical we do not treat the ride and the recovery as two separate problems — we treat them as one plan of care",
+  emphasis: ["General Medical", "one plan of care"],
 } as const;
 
 /* ---- About / bento ---------------------------------------- */
@@ -73,31 +83,31 @@ export const ABOUT = {
   eyebrow: "About us",
   title: ["Unveil precision.", "Discover the General Medical", "difference."],
   lede:
-    "At General Medical we do not treat a transfer as a gap between two hospitals — we treat it as part of the care. Our contracted crews move patients under continuous clinical supervision, in vehicles built and equipped as mobile intensive-care units, with a single named clinical lead from bedside to bedside.",
+    "At General Medical we do not treat the ride and the recovery as two separate problems. The same organization that brings a patient to their appointment also delivers the nursing and therapy at home, and modifies the home when that is what stands in the way — so the plan holds together instead of being handed between strangers.",
   cells: [
     {
-      key: "supervision",
-      accent: "interfac" as Accent,
-      title: "Continuous clinical supervision",
-      copy: "Monitoring never stops at the door — ECG, SpO₂ and pressures run from the referring bedside to the receiving one.",
+      key: "coordination",
+      accent: "azure" as Accent,
+      title: "One provider, one schedule",
+      copy: "Transportation, nursing, therapy and modifications booked through the same team, so appointments and visits stop colliding.",
     },
     {
-      key: "vehicles",
-      accent: "emergency" as Accent,
-      title: "Vehicles built as mobile ICUs",
-      copy: "Every vehicle carries defibrillation, airway, ventilation and controlled-drug packs, checked before each job.",
+      key: "athome",
+      accent: "coral" as Accent,
+      title: "Care where the patient lives",
+      copy: "Nursing and therapy delivered in the home, measured against the patient's own stairs, bathroom and routine.",
     },
     {
       key: "lead",
-      accent: "longdist" as Accent,
-      title: "One named clinical lead",
-      copy: "A single accountable clinician owns the journey end to end, so nothing is handed between strangers mid-transfer.",
+      accent: "violet" as Accent,
+      title: "One point of contact",
+      copy: "A single person owns the plan, so families are not repeating the same history to a new voice each week.",
     },
     {
       key: "record",
-      accent: "neonatal" as Accent,
-      title: "One team, one handover, one record",
-      copy: "Documentation travels with the patient and lands complete at the receiving ward — audit-ready, every time.",
+      accent: "mint" as Accent,
+      title: "Findings go back to the physician",
+      copy: "What our clinicians see at home is reported to the physician who ordered the care, not left on the kitchen counter.",
     },
   ],
   stats: [
@@ -108,67 +118,489 @@ export const ABOUT = {
   ],
 } as const;
 
-/* ---- Services (numbered stepper) -------------------------- */
+/* ---- Services --------------------------------------------
+   Six service lines. Each one is both a step in the stepper on
+   the overall page and a page of its own at /services/<slug>,
+   so `page` carries everything the sub-page needs and nothing
+   the stepper reads.
+   ---------------------------------------------------------- */
+
+/** Shared chrome for every /services/<slug> page. */
+export const SERVICE_PAGE = {
+  eyebrow: "Service",
+  includedTitle: "What\u2019s included",
+  whoTitle: "Who it\u2019s for",
+  stepsTitle: "How it works",
+  faqTitle: "Common questions",
+  otherTitle: "Other services",
+  endTitle: "Tell us what the patient needs and we\u2019ll tell you what we can do.",
+  cta: { label: "Request this service", href: "/#contact" },
+  backLabel: "All services",
+  backHref: "/services",
+} as const;
 
 export const SERVICES = {
   eyebrow: "Services",
-  title: ["Coverage for every", "level of care"],
+  title: ["Six services,", "one provider"],
   lede:
-    "We run the full spectrum of medical transport — each service staffed, equipped and documented to the clinical level the patient actually needs.",
-  cta: { label: "Schedule a transfer", href: "#contact" },
+    "Transportation, in-home care and the modifications that make a home work — arranged together, so the ride, the recovery and the front doorstep are not three separate phone calls.",
+  cta: { label: "Request service", href: "/#contact" },
+  /* The stepper's per-item affordance, alongside `cta`. */
+  how: "See how it works",
   items: [
     {
-      key: "emergency",
-      accent: "emergency" as Accent,
-      name: "Emergency response",
-      headline: "Blue-light cover, on contract",
-      copy: "Dispatch inside ninety seconds with advanced-life-support crews held on standing contracts for hospitals and care groups. Every vehicle carries defibrillation, airway and controlled-drug packs.",
-      points: ["Dispatch inside 90 seconds", "ALS crews on standing contract", "Defibrillation, airway and drug packs"],
-      chip: "Dispatch in 90s",
-      enquire: "Enquire about emergency response cover",
+      key: "nemt",
+      slug: "non-emergency-medical-transportation",
+      accent: "azure" as Accent,
+      name: "Non-Emergency Medical Transportation",
+      short: "Wheelchair and gurney rides to scheduled care.",
+      headline: "Wheelchair and gurney rides, on schedule",
+      copy: "Scheduled transportation for people who cannot drive themselves and cannot safely take a taxi — dialysis, chemotherapy, wound care, follow-up appointments and the ride home after a discharge. Wheelchair-accessible vans and gurney vehicles, with an attendant who helps at both ends.",
+      points: [
+        "Wheelchair-accessible vans",
+        "Gurney and stretcher vans",
+        "Door-through-door assistance",
+      ],
+      chip: "Wheelchair & gurney",
+      enquire: "Request non-emergency medical transportation",
+      page: {
+        title: ["Wheelchair and gurney", "transportation"],
+        lede:
+          "A ride to treatment should not be the reason treatment gets missed. We handle the recurring appointments and the one-off trips, with vehicles and attendants matched to how the patient actually travels.",
+        included: [
+          {
+            title: "Wheelchair-accessible vans",
+            copy: "Ramp or lift equipped, with four-point securement for the chair and a shoulder belt for the passenger.",
+          },
+          {
+            title: "Gurney transportation",
+            copy: "For patients who travel lying down but need no clinical monitoring on the way.",
+          },
+          {
+            title: "Door-through-door help",
+            copy: "The attendant collects the patient inside the residence and hands them over inside the clinic, not at the curb.",
+          },
+          {
+            title: "Recurring schedules",
+            copy: "Standing bookings for dialysis and therapy runs, set once instead of called in each week.",
+          },
+        ],
+        who: [
+          "Dialysis and infusion patients on a fixed weekly schedule",
+          "Patients discharged home who cannot sit up in a car",
+          "Assisted living and memory care residents attending appointments",
+          "Wheelchair users without an accessible vehicle at home",
+          "Families coordinating care for a parent from out of state",
+        ],
+        steps: [
+          {
+            title: "Tell us the appointment",
+            copy: "Pickup address, clinic, date and time, and whether the patient travels seated or lying down.",
+          },
+          {
+            title: "We match the vehicle",
+            copy: "Wheelchair van or gurney van, with the attendant support the trip calls for.",
+          },
+          {
+            title: "Both legs are covered",
+            copy: "The return is scheduled with the outbound, so nobody waits in a lobby for a ride that was never booked.",
+          },
+        ],
+        faq: [
+          {
+            q: "Can a family member ride along?",
+            a: "Yes. Let us know when you book so the vehicle assigned has a seat for them.",
+          },
+          {
+            q: "Do you transport patients on oxygen?",
+            a: "Patients travelling with their own portable oxygen can be carried on this service. If oxygen has to be administered or monitored in transit, non-emergency ambulance is the right service instead.",
+          },
+          {
+            q: "How far in advance should we book?",
+            a: "Recurring appointments are best set up as a standing schedule. For a single trip, contact us as early as you can and we will confirm what is available.",
+          },
+        ],
+      },
     },
     {
-      key: "interfacility",
-      accent: "interfac" as Accent,
-      name: "Inter-facility transfer",
-      headline: "Ward to ward, without a gap",
-      copy: "Planned and urgent moves between sites, with monitoring continuity, complete handover documentation and one named clinical lead accountable for the whole journey.",
-      points: ["Monitoring continuity end to end", "Complete handover documentation", "One named clinical lead"],
-      chip: "Bedside to bedside",
-      enquire: "Enquire about inter-facility transfer",
+      key: "ambulance",
+      slug: "non-emergency-ambulance",
+      accent: "violet" as Accent,
+      name: "Non-Emergency Ambulance",
+      short: "Monitored transport without a 911 call.",
+      headline: "Clinical transport, without the 911 call",
+      copy: "For patients who need monitoring or clinical support on the way but are not in an emergency — facility-to-facility moves, planned admissions, and returns home. Staffed by licensed EMTs, with oxygen, suction and vitals monitoring on board.",
+      points: [
+        "Licensed EMT crew",
+        "Oxygen, suction and vitals monitoring",
+        "Facility, admission and discharge moves",
+      ],
+      chip: "BLS equipped",
+      enquire: "Request non-emergency ambulance transport",
+      page: {
+        title: ["Non-emergency", "ambulance transport"],
+        lede:
+          "Some patients are stable but still need a clinician within arm's reach. This is the service for planned moves where monitoring cannot lapse, and where an emergency response was never the right call.",
+        included: [
+          {
+            title: "Licensed EMT crew",
+            copy: "Every unit is staffed to basic life support level, with the crew riding in the patient compartment.",
+          },
+            {
+            title: "Monitoring in transit",
+            copy: "Vitals, oxygen and suction available for the whole journey rather than checked at either end.",
+          },
+          {
+            title: "Facility-to-facility moves",
+            copy: "Hospital to skilled nursing, skilled nursing to hospital, and planned admissions arranged with both sites.",
+          },
+          {
+            title: "Paperwork that arrives with the patient",
+            copy: "Transfer documentation handed to the receiving staff, so the record does not have to be chased afterwards.",
+          },
+        ],
+        who: [
+          "Patients moving between a hospital and a skilled nursing facility",
+          "Planned admissions where the patient cannot travel by car",
+          "Discharges home that need clinical supervision on the way",
+          "Bariatric transports needing equipment a van cannot carry",
+          "Hospice patients moving to or from an inpatient unit",
+        ],
+        steps: [
+          {
+            title: "Confirm the clinical need",
+            copy: "We take the referral from the facility or the family and confirm the level of transport the patient actually needs.",
+          },
+          {
+            title: "Both ends are notified",
+            copy: "Sending and receiving staff get the window, so the patient is ready and the bed is waiting.",
+          },
+          {
+            title: "Handover, in person",
+            copy: "The crew hands the patient and the paperwork to the receiving team rather than leaving either at a desk.",
+          },
+        ],
+        faq: [
+          {
+            q: "Is this an emergency service?",
+            a: "No. General Medical does not provide 911 or emergency response. If someone is in immediate danger, call 911. This service is for planned and scheduled transport of stable patients.",
+          },
+          {
+            q: "How is this different from your wheelchair and gurney service?",
+            a: "Wheelchair and gurney transportation carries patients who need no clinical care on the way. Non-emergency ambulance is staffed and equipped for patients who need monitoring or support in transit.",
+          },
+          {
+            q: "Can a hospital case manager book directly?",
+            a: "Yes. Discharge planners and case managers can arrange transport with us and we will coordinate with the receiving facility.",
+          },
+        ],
+      },
     },
     {
-      key: "longdistance",
-      accent: "longdist" as Accent,
-      name: "Long-distance & repatriation",
-      headline: "Home, however far that is",
-      copy: "Cross-country and cross-border transfers by road and air ambulance, coordinated end to end — including escorts, customs and liaison with the receiving facility.",
-      points: ["Road and air ambulance", "Escorts, customs and liaison", "Coordinated end to end"],
-      chip: "UK & Europe",
-      enquire: "Enquire about long-distance transfer and repatriation",
+      key: "homehealth",
+      slug: "home-health",
+      accent: "mint" as Accent,
+      name: "Home Health",
+      short: "Skilled nursing and aide visits at home.",
+      headline: "Skilled care where the patient already lives",
+      copy: "Nursing and aide visits at home for patients recovering from surgery, managing a long-term condition, or leaving the hospital with a care plan someone has to actually follow. Visits are scheduled around the household and coordinated with the ordering physician.",
+      points: [
+        "Skilled nursing visits",
+        "Home health aide support",
+        "Coordinated with the ordering physician",
+      ],
+      chip: "In-home care",
+      enquire: "Request home health services",
+      page: {
+        title: ["Home health", "visits"],
+        lede:
+          "Recovery does not happen in a clinic — it happens in a kitchen, on a staircase, at 6am. Home health puts the clinical part of that where it belongs, and reports back to the physician who ordered it.",
+        included: [
+          {
+            title: "Skilled nursing",
+            copy: "Wound care, medication management, injections, vitals and the assessments the care plan calls for.",
+          },
+          {
+            title: "Home health aide visits",
+            copy: "Help with bathing, dressing, mobility and the daily routine, on a schedule the household can rely on.",
+          },
+          {
+            title: "Physician coordination",
+            copy: "Findings and changes go back to the ordering physician rather than sitting in a folder on the counter.",
+          },
+          {
+            title: "One care team",
+            copy: "Nursing, therapy and transportation drawn from the same organization, so nothing has to be re-explained.",
+          },
+        ],
+        who: [
+          "Patients discharged home with a post-hospital care plan",
+          "Adults managing diabetes, heart failure or COPD at home",
+          "Post-surgical patients needing wound care between appointments",
+          "Older adults whose families cannot provide daily help",
+          "Patients who would rather not travel for routine care",
+        ],
+        steps: [
+          {
+            title: "Referral and orders",
+            copy: "We take the referral from the physician, hospital or family and confirm what has been ordered.",
+          },
+          {
+            title: "Assessment at home",
+            copy: "A clinician visits, reviews the home as it is, and builds the visit schedule around the household.",
+          },
+          {
+            title: "Visits, then reporting",
+            copy: "Care is delivered on schedule and progress goes back to the physician who ordered it.",
+          },
+        ],
+        faq: [
+          {
+            q: "Do we need a physician's order?",
+            a: "Skilled nursing and therapy are provided under a physician's order. If you do not have one yet, contact us and we will walk you through what is needed.",
+          },
+          {
+            q: "How often are visits?",
+            a: "Visit frequency comes from the care plan rather than a fixed package, and is adjusted as the patient improves.",
+          },
+          {
+            q: "Can home health and therapy be combined?",
+            a: "Yes — nursing, physical therapy and occupational therapy are frequently scheduled together, which is the main reason to take them from one provider.",
+          },
+        ],
+      },
     },
     {
-      key: "neonatal",
-      accent: "neonatal" as Accent,
-      name: "Neonatal & paediatric",
-      headline: "The smallest patients, the steadiest hands",
-      copy: "Transport incubators, neonatal ventilators and crews credentialled in paediatric critical care, for babies who cannot wait for a bed somewhere else.",
-      points: ["Transport incubators", "Neonatal ventilation", "Paediatric critical-care crews"],
-      chip: "Incubator equipped",
-      enquire: "Enquire about neonatal and paediatric transport",
+      key: "physical",
+      slug: "physical-therapy",
+      accent: "amber" as Accent,
+      name: "Physical Therapy",
+      short: "Strength, balance and mobility, rebuilt at home.",
+      headline: "Strength, balance and mobility, rebuilt",
+      copy: "One-on-one therapy for patients recovering from surgery, injury, a stroke or a fall — gait and balance work, strengthening and pain management, delivered in the home where the progress has to hold.",
+      points: [
+        "Post-surgical and post-injury rehabilitation",
+        "Gait, balance and fall-prevention work",
+        "In-home sessions, no travel required",
+      ],
+      chip: "In-home PT",
+      enquire: "Request physical therapy",
+      page: {
+        title: ["Physical therapy,", "in the home"],
+        lede:
+          "A patient who can walk the length of a clinic hallway has not necessarily solved their own staircase. Therapy at home is measured against the real obstacles, because that is where the sessions happen.",
+        included: [
+          {
+            title: "Gait and balance training",
+            copy: "Walking, turning, curbs and stairs — practised on the surfaces the patient actually uses.",
+          },
+          {
+            title: "Strengthening programs",
+            copy: "Progressive work after surgery or a long hospital stay, adjusted session by session.",
+          },
+          {
+            title: "Fall-risk reduction",
+            copy: "The hazards that cause falls at home get identified and trained around, not just noted.",
+          },
+          {
+            title: "A home program that fits",
+            copy: "Exercises the patient can do with what is in the house, so the days between visits still count.",
+          },
+        ],
+        who: [
+          "Patients recovering from hip or knee replacement",
+          "Stroke survivors rebuilding mobility and gait",
+          "Adults who have had a fall and lost confidence moving around",
+          "Patients deconditioned by a long hospital admission",
+          "Anyone whose mobility makes travelling to an outpatient clinic hard",
+        ],
+        steps: [
+          {
+            title: "Evaluation at home",
+            copy: "A therapist assesses strength, gait and balance, and walks the rooms the patient has trouble with.",
+          },
+            {
+            title: "A plan with a target",
+            copy: "Goals are set against real tasks — the stairs, the bathroom, the walk to the mailbox.",
+          },
+          {
+            title: "Sessions and progression",
+            copy: "Visits continue on schedule, the program advances as the patient does, and progress is reported back.",
+          },
+        ],
+        faq: [
+          {
+            q: "Is home therapy as effective as a clinic?",
+            a: "For mobility and daily-function goals it has a real advantage: the therapist trains on the patient's own stairs, floors and furniture rather than a clinic's.",
+          },
+          {
+            q: "What equipment is needed?",
+            a: "The therapist brings what the session requires and builds the home program around what is already in the house.",
+          },
+          {
+            q: "Can therapy be combined with occupational therapy?",
+            a: "Often, yes. Physical therapy works on moving; occupational therapy works on the tasks. Many patients are scheduled for both.",
+          },
+        ],
+      },
     },
     {
-      key: "bariatric",
-      accent: "bariatric" as Accent,
-      name: "Bariatric & specialty",
-      headline: "Dignity at any weight",
-      copy: "Reinforced stretchers rated to 450 kg, powered loading systems and crews trained in safe manual handling — alongside isolation and mental-health transport.",
-      points: ["Stretchers rated to 450 kg", "Powered loading systems", "Isolation and mental-health transport"],
-      chip: "Rated to 450 kg",
-      enquire: "Enquire about bariatric and specialty transport",
+      key: "occupational",
+      slug: "occupational-therapy",
+      accent: "gold" as Accent,
+      name: "Occupational Therapy",
+      short: "Getting back to everyday tasks safely.",
+      headline: "Back to the everyday things",
+      copy: "Therapy aimed at the tasks that make a day work — dressing, bathing, cooking, getting in and out of a chair. Therapists assess the home as it stands, then train around it, with adaptive equipment where equipment is what helps.",
+      points: [
+        "Activities-of-daily-living training",
+        "Adaptive equipment and technique",
+        "Home safety assessment",
+      ],
+      chip: "Daily living",
+      enquire: "Request occupational therapy",
+      page: {
+        title: ["Occupational therapy,", "task by task"],
+        lede:
+          "Independence is not one skill, it is a hundred small ones — reaching a cupboard, standing from a chair, managing a shower alone. Occupational therapy rebuilds those specifically, in the place they have to work.",
+        included: [
+          {
+            title: "Daily living retraining",
+            copy: "Dressing, bathing, grooming, cooking and eating, retrained with technique before equipment.",
+          },
+          {
+            title: "Adaptive equipment",
+            copy: "Reachers, seating, bathing aids and utensils, recommended and then actually practised with.",
+          },
+          {
+            title: "Home safety assessment",
+            copy: "A room-by-room review of what the patient does in a day and what the home makes harder than it needs to be.",
+          },
+          {
+            title: "Caregiver training",
+            copy: "The people helping day to day learn the same techniques, so care does not reset between visits.",
+          },
+        ],
+        who: [
+          "Stroke survivors relearning one-handed or seated technique",
+          "Patients with arthritis or Parkinson's managing daily tasks",
+          "Adults recovering from a hand, shoulder or upper-limb injury",
+          "Patients with memory loss who need routines simplified",
+          "Households where a caregiver needs training as much as the patient does",
+        ],
+        steps: [
+          {
+            title: "Assessment in context",
+            copy: "The therapist watches the tasks that are actually difficult, in the rooms where they happen.",
+          },
+          {
+            title: "Technique, then equipment",
+            copy: "Method is trained first; adaptive equipment is added where it genuinely earns its place.",
+          },
+          {
+            title: "Handover to the household",
+            copy: "Patient and caregivers are trained together, and anything structural is referred on for modification.",
+          },
+        ],
+        faq: [
+          {
+            q: "How is this different from physical therapy?",
+            a: "Physical therapy targets movement — strength, gait, balance. Occupational therapy targets the tasks that movement is for, like dressing, bathing and cooking.",
+          },
+          {
+            q: "Will you recommend equipment we then have to source ourselves?",
+            a: "We tell you exactly what is needed and why. Where the answer is structural — a grab bar, a shower conversion — it can go straight to our home modifications team.",
+          },
+          {
+            q: "Can caregivers be included in sessions?",
+            a: "Yes, and we encourage it. Training the household is usually what makes the gains stick.",
+          },
+        ],
+      },
+    },
+    {
+      key: "homemods",
+      slug: "medical-home-modifications",
+      accent: "coral" as Accent,
+      name: "Medical Home Modifications",
+      short: "Ramps, grab bars and bathroom conversions.",
+      headline: "A home that stops working against the patient",
+      copy: "Ramps, grab bars, stair lifts and bathroom conversions, specified from a clinical assessment rather than guesswork — then built, installed and checked. The same assessment our therapists already carry out becomes the specification.",
+      points: [
+        "Ramps, grab bars and stair lifts",
+        "Walk-in shower and bathroom conversions",
+        "Specified from a clinical assessment",
+      ],
+      chip: "Access & safety",
+      enquire: "Request medical home modifications",
+      page: {
+        title: ["Medical home", "modifications"],
+        lede:
+          "Most falls happen in a handful of predictable places. Modifications are the part of care that outlasts the visits — built to what the assessment found, not to what fitted in the van.",
+        included: [
+          {
+            title: "Access and entry",
+            copy: "Ramps, threshold ramps, handrails and widened doorways so the front door stops being the hardest part of the day.",
+          },
+          {
+            title: "Bathroom conversions",
+            copy: "Walk-in and roll-in showers, grab bars set to the patient's reach, raised seating and non-slip flooring.",
+          },
+          {
+            title: "Stairs and levels",
+            copy: "Stair lifts, handrails and step modifications where a home has levels the patient cannot manage.",
+          },
+          {
+            title: "Clinically specified",
+            copy: "Heights, widths and placements come from the therapist's assessment of this patient, not a standard install sheet.",
+          },
+        ],
+        who: [
+          "Patients coming home to a house they can no longer navigate",
+          "Wheelchair users whose entry or bathroom is not accessible",
+          "Older adults staying at home rather than moving to assisted living",
+          "Households after a fall, where the cause is still in place",
+          "Families acting on a therapist's home safety recommendations",
+        ],
+        steps: [
+          {
+            title: "Assessment and specification",
+            copy: "A clinician reviews the home against what the patient can do, and the findings become the build specification.",
+          },
+          {
+            title: "Scope and quote",
+            copy: "You get the work, the sequence and the cost in writing before anything is ordered.",
+          },
+          {
+            title: "Install and verify",
+            copy: "The work is installed, then checked with the patient using it — not just signed off as complete.",
+          },
+        ],
+        faq: [
+          {
+            q: "Do we need a therapy assessment first?",
+            a: "It is the best starting point, because it tells us the reach, height and clearance this particular patient needs. If an assessment already exists, we can work from it.",
+          },
+          {
+            q: "How quickly can work start?",
+            a: "It depends on scope: grab bars and threshold ramps are quick, a full bathroom conversion is a build. We give you the timeline with the quote.",
+          },
+          {
+            q: "Can this be arranged alongside a hospital discharge?",
+            a: "Yes, and that is when it matters most. Tell us the discharge date and we will tell you honestly what can be in place by then.",
+          },
+        ],
+      },
     },
   ],
 } as const;
+
+/** The service line behind a /services/<slug> route, if the slug is real. */
+export type Service = (typeof SERVICES.items)[number];
+
+export function serviceBySlug(slug: string): Service | undefined {
+  return SERVICES.items.find((item) => item.slug === slug);
+}
 
 /* ---- Crew ------------------------------------------------- */
 
@@ -177,7 +609,7 @@ export const CREW = {
   title: ["Meet the crew", "behind every mile"],
   lede:
     "Paramedics, flight nurses and intensive-care physicians who stay with your patient from bedside to bedside — one team, one handover, one record.",
-  cta: { label: "View all crew", href: "#contact" },
+  cta: { label: "View all crew", href: "/#contact" },
   people: [
     { role: "Critical Care Paramedic", name: "Daniel Whitfield", line: "Leads advanced-life-support road transfers and ventilated inter-facility moves.", meta: "On the road since 2014" },
     { role: "Flight Nurse", name: "Amara Osei", line: "Fixed-wing and rotary repatriation, bedside to bedside.", meta: "Flying since 2016" },
@@ -202,12 +634,13 @@ export const CREW = {
 /* ---- Ticker ----------------------------------------------- */
 
 export const TICKER = [
-  "Emergency response",
-  "Inter-facility transfer",
-  "Neonatal & paediatric",
-  "Long-distance & repatriation",
-  "Bariatric & specialty",
-  "Safe. Swift. Supervised.",
+  "Non-emergency medical transportation",
+  "Non-emergency ambulance",
+  "Home health",
+  "Physical therapy",
+  "Occupational therapy",
+  "Medical home modifications",
+  "Scheduled. Staffed. Supervised.",
 ] as const;
 
 /* ---- Cases ------------------------------------------------ */
@@ -221,7 +654,7 @@ export const CASES = {
   items: [
     {
       key: "emergency",
-      accent: "emergency" as Accent,
+      accent: "coral" as Accent,
       tab: "Emergency response",
       title: ["Margaret’s transfer,", "uninterrupted"],
       copy: "Margaret went into a cardiac event on a Tuesday morning in a community hospital with no cath lab. The nearest interventional centre was forty minutes away, and every one of those minutes was going to count.",
@@ -234,7 +667,7 @@ export const CASES = {
     },
     {
       key: "interfacility",
-      accent: "interfac" as Accent,
+      accent: "azure" as Accent,
       tab: "Inter-facility",
       title: ["A ventilated patient,", "moved without a gap"],
       copy: "A ventilated ICU patient needed a specialist neurosurgical bed sixty miles away. The risk was never the distance — it was the handover, and everything that can be dropped in one.",
@@ -247,7 +680,7 @@ export const CASES = {
     },
     {
       key: "repatriation",
-      accent: "longdist" as Accent,
+      accent: "violet" as Accent,
       tab: "Repatriation",
       title: ["Eleven hundred miles,", "one clinical team"],
       copy: "After a fall on holiday in southern Spain, a patient with a fractured pelvis needed to come home — with the same team from the Spanish ward all the way to a bed in Leeds.",
@@ -260,7 +693,7 @@ export const CASES = {
     },
     {
       key: "neonatal",
-      accent: "neonatal" as Accent,
+      accent: "mint" as Accent,
       tab: "Neonatal",
       title: ["Four hours old,", "and already travelling"],
       copy: "A baby born at thirty-one weeks needed a level-three neonatal unit that the delivering hospital did not have. Everything about the journey had to be built around keeping her warm, stable and undisturbed.",
@@ -286,7 +719,7 @@ export const PARTNERS = {
     { label: "Coverage", value: "UK-wide, Europe on request" },
     { label: "Reporting", value: "Monthly SLA pack, live API" },
   ],
-  cta: { label: "Talk to our contracts team", href: "#contact" },
+  cta: { label: "Talk to our contracts team", href: "/#contact" },
   spokes: [
     "NHS trusts",
     "Private hospitals",
@@ -420,41 +853,42 @@ export const FOOTER = {
     {
       title: "Services",
       links: [
-        { label: "Emergency response", href: "#services" },
-        { label: "Inter-facility transfer", href: "#services" },
-        { label: "Long-distance & repatriation", href: "#services" },
-        { label: "Neonatal & paediatric", href: "#services" },
-        { label: "Bariatric & specialty", href: "#services" },
+        { label: "Non-Emergency Transportation", href: "/services/non-emergency-medical-transportation" },
+        { label: "Non-Emergency Ambulance", href: "/services/non-emergency-ambulance" },
+        { label: "Home Health", href: "/services/home-health" },
+        { label: "Physical Therapy", href: "/services/physical-therapy" },
+        { label: "Occupational Therapy", href: "/services/occupational-therapy" },
+        { label: "Medical Home Modifications", href: "/services/medical-home-modifications" },
       ],
     },
     {
       title: "Company",
       links: [
-        { label: "About us", href: "#about" },
-        { label: "Our crew", href: "#crew" },
-        { label: "Case studies", href: "#cases" },
-        { label: "For partners", href: "#partners" },
+        { label: "About us", href: "/#about" },
+        { label: "Our crew", href: "/#crew" },
+        { label: "Case studies", href: "/#cases" },
+        { label: "For partners", href: "/#partners" },
       ],
     },
     {
       title: "Resources",
       links: [
-        { label: "Transfer calculator", href: "#calculator" },
-        { label: "Coverage map", href: "#calculator" },
-        { label: "SLA reporting", href: "#partners" },
-        { label: "Dispatch API", href: "#partners" },
+        { label: "Transfer calculator", href: "/#calculator" },
+        { label: "Coverage map", href: "/#calculator" },
+        { label: "SLA reporting", href: "/#partners" },
+        { label: "Dispatch API", href: "/#partners" },
       ],
     },
     {
       title: "Contact",
       links: [
-        { label: "Request a transfer", href: "#contact" },
-        { label: "Contracts team", href: "#contact" },
+        { label: "Request a transfer", href: "/#contact" },
+        { label: "Contracts team", href: "/#contact" },
         { label: "Privacy Policy", href: "#" },
         { label: "Terms of Service", href: "#" },
       ],
     },
   ],
-  legal: "General Medical — Safe. Swift. Supervised.",
+  legal: "General Medical — Scheduled. Staffed. Supervised.",
   wordmark: "General Medical",
 } as const;

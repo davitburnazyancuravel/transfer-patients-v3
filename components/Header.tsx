@@ -20,8 +20,14 @@
    3. The mobile sheet, with the usual dialog manners — focus moved
       in, trapped while open, restored to the toggle on close, body
       scroll locked, Escape honoured.
+
+   The first two both resolve elements out of the document, so both
+   are keyed on the pathname: this bar sits in the root layout and
+   survives a client-side navigation, and a one-shot lookup would
+   leave them observing the previous page's detached nodes.
    ============================================================ */
 
+import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useId, useRef, useState } from "react";
 
 import { BrandMark } from "@/components/BrandMark";
@@ -81,6 +87,8 @@ function focusablesIn(root: HTMLElement): HTMLElement[] {
 }
 
 export function Header() {
+  const pathname = usePathname();
+
   const rootRef = useRef<HTMLElement>(null);
   const listRef = useRef<HTMLUListElement>(null);
   const sheetRef = useRef<HTMLDivElement>(null);
@@ -125,7 +133,7 @@ export function Header() {
 
     observer.observe(hero);
     return () => observer.disconnect();
-  }, []);
+  }, [pathname]);
 
   /* ---- Scroll-spy ------------------------------------------
      The "current" band runs from just under the bar down to a third
@@ -140,7 +148,10 @@ export function Header() {
         a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1
       );
 
-    if (sections.length === 0) return;
+    if (sections.length === 0) {
+      setActiveId(null);
+      return;
+    }
 
     const inBand = new Set<string>();
 
@@ -159,7 +170,7 @@ export function Header() {
 
     sections.forEach((el) => observer.observe(el));
     return () => observer.disconnect();
-  }, []);
+  }, [pathname]);
 
   /* ---- Underline geometry ----------------------------------
      One bar for the whole row, so it needs the active item's box in
@@ -277,7 +288,7 @@ export function Header() {
       data-open={open ? "true" : "false"}
     >
       <div className="wrap hdr__inner">
-        <a className="hdr__brand" href={`#${HERO_ID}`}>
+        <a className="hdr__brand" href={`/#${HERO_ID}`}>
           <BrandMark className="hdr__mark" />
           <span className="hdr__brandText">
             <span className="hdr__name">{SITE.name}</span>

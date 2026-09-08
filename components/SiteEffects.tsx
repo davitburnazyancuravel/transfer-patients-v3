@@ -1,5 +1,6 @@
 "use client";
 
+import { usePathname } from "next/navigation";
 import { useEffect } from "react";
 
 import { formatStat, type StatFormat } from "@/lib/util";
@@ -12,12 +13,19 @@ import { formatStat, type StatFormat } from "@/lib/util";
    • Any element carrying data-count animates its number once.
 
    Sections never wire their own observers — they just mark up.
+
+   The scan is keyed on the pathname. This module lives in the root
+   layout, which survives a client-side navigation, so a one-shot
+   scan would only ever see the first page's markup and every
+   .rv on a page reached through <Link> would stay at opacity 0.
    ============================================================ */
 
 const REVEAL_SELECTOR = "[data-rv]";
 const COUNT_SELECTOR = "[data-count]";
 
 export function SiteEffects() {
+  const pathname = usePathname();
+
   useEffect(() => {
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -101,7 +109,7 @@ export function SiteEffects() {
         if (frame) cancelAnimationFrame(frame);
       });
     };
-  }, []);
+  }, [pathname]);
 
   return null;
 }
